@@ -6,9 +6,9 @@ import 'color_scheme.dart';
 class AppTextTheme {
   AppTextTheme._();
 
-  /// Base text style with Inter font
+  /// Base text style with Inter font - Dark text for light theme
   static TextStyle get _baseTextStyle => GoogleFonts.inter(
-        color: AppColors.onPrimary,
+        color: AppColors.onSecondary,
         fontWeight: FontWeight.w400,
       );
 

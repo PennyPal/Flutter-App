@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'route_names.dart';
 import '../../features/splash/presentation/pages/splash_page.dart';
+import '../../features/welcome/presentation/pages/welcome_page.dart';
 import '../../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
@@ -42,6 +43,11 @@ class AppRouter {
           path: RouteNames.onboarding,
           name: 'onboarding',
           builder: (context, state) => const OnboardingPage(),
+        ),
+        GoRoute(
+          path: '/welcome',
+          name: 'welcome',
+          builder: (context, state) => const WelcomePage(),
         ),
 
         // Authentication

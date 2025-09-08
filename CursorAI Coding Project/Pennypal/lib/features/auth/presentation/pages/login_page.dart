@@ -65,7 +65,11 @@ class _LoginPageState extends State<LoginPage> {
     
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: AppColors.pinkGradient,
+        ),
+        child: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppTheme.xxl),
           child: Form(
@@ -94,17 +98,17 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       const SizedBox(height: AppTheme.lg),
                       Text(
-                        'Welcome Back',
+                        'Sign In',
                         style: theme.textTheme.displaySmall?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.onPrimary,
+                          color: AppColors.onSecondary,
                         ),
                       ),
                       const SizedBox(height: AppTheme.sm),
                       Text(
-                        'Sign in to continue your financial journey',
+                        'Welcome back to PennyPal',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: AppColors.onSecondary,
+                          color: AppColors.onSurface,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -263,6 +267,7 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
           ),
+        ),
         ),
       ),
     );

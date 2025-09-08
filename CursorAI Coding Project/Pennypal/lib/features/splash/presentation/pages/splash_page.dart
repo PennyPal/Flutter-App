@@ -47,8 +47,8 @@ class _SplashPageState extends State<SplashPage>
     Future.delayed(const Duration(milliseconds: 2500), () {
       if (mounted) {
         // TODO: Check authentication state and onboarding status
-        // For now, go to onboarding
-        context.go(RouteNames.onboarding);
+        // For now, go to welcome page
+        context.go('/welcome');
       }
     });
   }
@@ -63,75 +63,82 @@ class _SplashPageState extends State<SplashPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: Center(
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            return FadeTransition(
-              opacity: _fadeAnimation,
-              child: ScaleTransition(
-                scale: _scaleAnimation,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // App Logo
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        gradient: AppColors.primaryGradient,
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primary.withOpacity(0.3),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.account_balance_wallet,
-                        size: 60,
-                        color: AppColors.onPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    
-                    // App Name
-                    Text(
-                      'PennyPal',
-                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.onPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    
-                    // Tagline
-                    Text(
-                      'Make budgeting fun',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppColors.onSecondary,
-                      ),
-                    ),
-                    const SizedBox(height: 48),
-                    
-                    // Loading indicator
-                    SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 3,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          AppColors.primary.withOpacity(0.7),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: AppColors.pinkGradient,
+        ),
+        child: Center(
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              return FadeTransition(
+                opacity: _fadeAnimation,
+                child: ScaleTransition(
+                  scale: _scaleAnimation,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Pig Mascot (placeholder for now)
+                      Container(
+                        width: 150,
+                        height: 150,
+                        decoration: BoxDecoration(
+                          color: AppColors.secondary,
+                          borderRadius: BorderRadius.circular(75),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.secondary.withValues(alpha: 0.3),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.savings,
+                          size: 80,
+                          color: Colors.white,
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 32),
+                      
+                      // App Name
+                      Text(
+                        'PENNY PAL',
+                        style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.onSecondary,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      
+                      // Tagline
+                      Text(
+                        'Your financial friend',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: AppColors.onSurface,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 48),
+                      
+                      // Loading indicator
+                      SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 3,
+                          valueColor: const AlwaysStoppedAnimation<Color>(
+                            AppColors.primary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
