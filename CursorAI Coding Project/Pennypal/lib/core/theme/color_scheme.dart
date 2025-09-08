@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 
-/// PennyPal color system following the design specifications
+/// PennyPal color system following the Figma design specifications
 class AppColors {
   AppColors._();
 
-  // Primary Brand Colors
-  static const Color primary = Color(0xFF4F46E5); // Indigo - Primary actions
-  static const Color secondary = Color(0xFF22C55E); // Green - Success/Money
-  static const Color accent = Color(0xFFF59E0B); // Amber - Highlights/Rewards
+  // Primary Brand Colors - Pink/Peach Theme from Figma
+  static const Color primary = Color(0xFF22C55E); // Green - Primary actions & buttons
+  static const Color secondary = Color(0xFFFF6B9D); // Pink - Secondary accents
+  static const Color accent = Color(0xFFFFC0CB); // Light pink - Highlights
 
-  // Dark Theme Background Hierarchy
-  static const Color background = Color(0xFF0F1222); // Main background
-  static const Color surface = Color(0xFF171A2B); // Cards/containers
-  static const Color surfaceVariant = Color(0xFF1C2336); // Elevated cards
+  // Light Theme Background Hierarchy (matching Figma)
+  static const Color background = Color(0xFFFDF2F8); // Light pink background
+  static const Color surface = Color(0xFFFFFFFF); // White cards/containers
+  static const Color surfaceVariant = Color(0xFFFCE7F3); // Light pink elevated cards
 
-  // Text & Content
-  static const Color onPrimary = Color(0xFFF8FAFC); // Primary text
-  static const Color onSecondary = Color(0xFFCBD5E1); // Secondary text
-  static const Color onSurface = Color(0xFF94A3B8); // Disabled/placeholder
+  // Text & Content (dark text on light background)
+  static const Color onPrimary = Color(0xFFFFFFFF); // White text on primary
+  static const Color onSecondary = Color(0xFF374151); // Dark gray text
+  static const Color onSurface = Color(0xFF6B7280); // Medium gray text
 
   // Semantic Colors
   static const Color success = Color(0xFF10B981); // Positive transactions
@@ -25,21 +25,21 @@ class AppColors {
   static const Color error = Color(0xFFEF4444); // Errors/overspending
   static const Color info = Color(0xFF3B82F6); // Information states
 
-  // Gradient Colors
+  // Gradient Colors - Soft pink/green theme
   static const LinearGradient primaryGradient = LinearGradient(
-    colors: [primary, Color(0xFF6366F1)],
+    colors: [primary, Color(0xFF16A34A)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  static const LinearGradient successGradient = LinearGradient(
-    colors: [success, Color(0xFF059669)],
+  static const LinearGradient pinkGradient = LinearGradient(
+    colors: [Color(0xFFFDF2F8), Color(0xFFFCE7F3)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  static const LinearGradient warningGradient = LinearGradient(
-    colors: [warning, Color(0xFFD97706)],
+  static const LinearGradient cardGradient = LinearGradient(
+    colors: [surface, surfaceVariant],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -62,22 +62,23 @@ class AppColors {
     return categoryColors[hash.abs() % categoryColors.length];
   }
 
-  /// Create a ColorScheme for the app
-  static ColorScheme get colorScheme => const ColorScheme.dark(
+  /// Create a ColorScheme for the app - Light theme to match Figma
+  static ColorScheme get colorScheme => const ColorScheme.light(
         primary: primary,
         onPrimary: onPrimary,
         secondary: secondary,
         onSecondary: onSecondary,
         surface: surface,
-        onSurface: onPrimary,
+        onSurface: onSecondary,
         surfaceContainerHighest: surfaceVariant,
-        onSurfaceVariant: onSecondary,
+        onSurfaceVariant: onSurface,
         error: error,
         onError: onPrimary,
         outline: onSurface,
-        outlineVariant: Color(0xFF475569),
-        inverseSurface: onPrimary,
+        outlineVariant: Color(0xFFD1D5DB),
+        inverseSurface: onSecondary,
         onInverseSurface: surface,
-        inversePrimary: Color(0xFF312E81),
+        inversePrimary: Color(0xFFDCFCE7),
+        brightness: Brightness.light,
       );
 }

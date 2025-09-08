@@ -75,7 +75,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
     
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: AppColors.pinkGradient,
+        ),
+        child: SafeArea(
         child: Column(
           children: [
             // Header with skip button
@@ -120,13 +124,20 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           width: 120,
                           height: 120,
                           decoration: BoxDecoration(
-                            color: page.color.withOpacity(0.1),
+                            color: page.color,
                             borderRadius: BorderRadius.circular(60),
+                            boxShadow: [
+                              BoxShadow(
+                                color: page.color.withValues(alpha: 0.3),
+                                blurRadius: 15,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
                           ),
                           child: Icon(
                             page.icon,
                             size: 60,
-                            color: page.color,
+                            color: Colors.white,
                           ),
                         ),
                         const SizedBox(height: AppTheme.xxxl),
@@ -136,7 +147,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           page.title,
                           style: theme.textTheme.displaySmall?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: AppColors.onPrimary,
+                            color: AppColors.onSecondary,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -146,7 +157,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         Text(
                           page.description,
                           style: theme.textTheme.bodyLarge?.copyWith(
-                            color: AppColors.onSecondary,
+                            color: AppColors.onSurface,
                             height: 1.5,
                           ),
                           textAlign: TextAlign.center,
@@ -199,6 +210,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               ),
             ),
           ],
+        ),
         ),
       ),
     );

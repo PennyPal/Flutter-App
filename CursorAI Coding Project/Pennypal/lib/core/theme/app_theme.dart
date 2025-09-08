@@ -279,8 +279,8 @@ class AppTheme {
         extensions: const <ThemeExtension<dynamic>>[
           _AppThemeExtension(
             primaryGradient: AppColors.primaryGradient,
-            successGradient: AppColors.successGradient,
-            warningGradient: AppColors.warningGradient,
+            pinkGradient: AppColors.pinkGradient,
+            cardGradient: AppColors.cardGradient,
           ),
         ],
       );
@@ -291,24 +291,24 @@ class AppTheme {
 class _AppThemeExtension extends ThemeExtension<_AppThemeExtension> {
   const _AppThemeExtension({
     required this.primaryGradient,
-    required this.successGradient,
-    required this.warningGradient,
+    required this.pinkGradient,
+    required this.cardGradient,
   });
 
   final LinearGradient primaryGradient;
-  final LinearGradient successGradient;
-  final LinearGradient warningGradient;
+  final LinearGradient pinkGradient;
+  final LinearGradient cardGradient;
 
   @override
   _AppThemeExtension copyWith({
     LinearGradient? primaryGradient,
-    LinearGradient? successGradient,
-    LinearGradient? warningGradient,
+    LinearGradient? pinkGradient,
+    LinearGradient? cardGradient,
   }) {
     return _AppThemeExtension(
       primaryGradient: primaryGradient ?? this.primaryGradient,
-      successGradient: successGradient ?? this.successGradient,
-      warningGradient: warningGradient ?? this.warningGradient,
+      pinkGradient: pinkGradient ?? this.pinkGradient,
+      cardGradient: cardGradient ?? this.cardGradient,
     );
   }
 
@@ -319,8 +319,8 @@ class _AppThemeExtension extends ThemeExtension<_AppThemeExtension> {
     }
     return _AppThemeExtension(
       primaryGradient: LinearGradient.lerp(primaryGradient, other.primaryGradient, t)!,
-      successGradient: LinearGradient.lerp(successGradient, other.successGradient, t)!,
-      warningGradient: LinearGradient.lerp(warningGradient, other.warningGradient, t)!,
+      pinkGradient: LinearGradient.lerp(pinkGradient, other.pinkGradient, t)!,
+      cardGradient: LinearGradient.lerp(cardGradient, other.cardGradient, t)!,
     );
   }
 }
