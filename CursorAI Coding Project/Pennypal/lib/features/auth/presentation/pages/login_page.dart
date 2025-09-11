@@ -83,18 +83,10 @@ class _LoginPageState extends State<LoginPage> {
                 Center(
                   child: Column(
                     children: [
-                      Container(
+                      Image.asset(
+                        'assets/images/pennypal_logo.png',
                         width: 80,
                         height: 80,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          gradient: AppColors.primaryGradient,
-                        ),
-                        child: const Icon(
-                          Icons.account_balance_wallet,
-                          size: 40,
-                          color: AppColors.onPrimary,
-                        ),
                       ),
                       const SizedBox(height: AppTheme.lg),
                       Text(
