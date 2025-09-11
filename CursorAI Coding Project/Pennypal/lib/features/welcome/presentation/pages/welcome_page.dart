@@ -26,25 +26,10 @@ class WelcomePage extends StatelessWidget {
                 const Spacer(),
                 
                 // Pig Mascot
-                Container(
+                Image.asset(
+                  'assets/images/pennypal_logo.png',
                   width: 120,
                   height: 120,
-                  decoration: BoxDecoration(
-                    color: AppColors.secondary,
-                    borderRadius: BorderRadius.circular(60),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.secondary.withValues(alpha: 0.3),
-                        blurRadius: 15,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.savings,
-                    size: 60,
-                    color: Colors.white,
-                  ),
                 ),
                 
                 const SizedBox(height: AppTheme.xxl),

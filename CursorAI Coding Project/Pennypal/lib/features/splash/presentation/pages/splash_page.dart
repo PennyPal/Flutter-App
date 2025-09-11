@@ -78,26 +78,11 @@ class _SplashPageState extends State<SplashPage>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Pig Mascot (placeholder for now)
-                      Container(
+                      // Pig Mascot
+                      Image.asset(
+                        'assets/images/pennypal_logo.png',
                         width: 150,
                         height: 150,
-                        decoration: BoxDecoration(
-                          color: AppColors.secondary,
-                          borderRadius: BorderRadius.circular(75),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.secondary.withValues(alpha: 0.3),
-                              blurRadius: 20,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.savings,
-                          size: 80,
-                          color: Colors.white,
-                        ),
                       ),
                       const SizedBox(height: 32),
                       
