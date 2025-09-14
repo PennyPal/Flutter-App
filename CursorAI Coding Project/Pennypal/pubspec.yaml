@@ -59,6 +59,7 @@ flutter:
   # Assets
   assets:
     - assets/images/
+    - assets/images/background_news.png
     - assets/icons/
     - assets/animations/
     - assets/data/
