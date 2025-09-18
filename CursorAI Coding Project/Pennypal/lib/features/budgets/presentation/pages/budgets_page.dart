@@ -16,7 +16,10 @@ class BudgetsPage extends StatelessWidget {
             onPressed: () {
               // TODO: Add budget
             },
-            icon: const Icon(Icons.add),
+            icon: const Icon(
+              Icons.add,
+              color: AppColors.onSurfaceDark,
+            ),
           ),
         ],
       ),
@@ -27,7 +30,7 @@ class BudgetsPage extends StatelessWidget {
             Icon(
               Icons.pie_chart,
               size: 64,
-              color: AppColors.onSurface,
+              color: AppColors.onSurfaceDark,
             ),
             SizedBox(height: 16),
             Text(
@@ -35,7 +38,7 @@ class BudgetsPage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: AppColors.onPrimary,
+                color: AppColors.onSurfaceDark,
               ),
             ),
             SizedBox(height: 8),

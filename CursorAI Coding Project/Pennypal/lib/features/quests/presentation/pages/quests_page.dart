@@ -19,7 +19,7 @@ class QuestsPage extends StatelessWidget {
             Icon(
               Icons.emoji_events,
               size: 64,
-              color: AppColors.onSurface,
+              color: AppColors.onSurfaceDark,
             ),
             SizedBox(height: 16),
             Text(
@@ -27,7 +27,7 @@ class QuestsPage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: AppColors.onPrimary,
+                color: AppColors.onSurfaceDark,
               ),
             ),
             SizedBox(height: 8),

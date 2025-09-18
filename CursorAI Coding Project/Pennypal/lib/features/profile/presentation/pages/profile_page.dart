@@ -16,7 +16,10 @@ class ProfilePage extends StatelessWidget {
             onPressed: () {
               // TODO: Edit profile
             },
-            icon: const Icon(Icons.edit),
+            icon: const Icon(
+              Icons.edit,
+              color: AppColors.onSurfaceDark,
+            ),
           ),
         ],
       ),
@@ -27,7 +30,7 @@ class ProfilePage extends StatelessWidget {
             Icon(
               Icons.person,
               size: 64,
-              color: AppColors.onSurface,
+              color: AppColors.onSurfaceDark,
             ),
             SizedBox(height: 16),
             Text(
@@ -35,7 +38,7 @@ class ProfilePage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: AppColors.onPrimary,
+                color: AppColors.onSurfaceDark,
               ),
             ),
             SizedBox(height: 8),
