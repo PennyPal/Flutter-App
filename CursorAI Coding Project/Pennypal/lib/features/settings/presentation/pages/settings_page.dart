@@ -13,8 +13,11 @@ class SettingsPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Settings'),
         leading: IconButton(
-          onPressed: () => context.pop(),
-          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.go('/home'),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: AppColors.onSurfaceDark,
+          ),
         ),
       ),
       body: const Center(
@@ -24,7 +27,7 @@ class SettingsPage extends StatelessWidget {
             Icon(
               Icons.settings,
               size: 64,
-              color: AppColors.onSurface,
+              color: AppColors.onSurfaceDark,
             ),
             SizedBox(height: 16),
             Text(
@@ -32,7 +35,7 @@ class SettingsPage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: AppColors.onPrimary,
+                color: AppColors.onSurfaceDark,
               ),
             ),
             SizedBox(height: 8),

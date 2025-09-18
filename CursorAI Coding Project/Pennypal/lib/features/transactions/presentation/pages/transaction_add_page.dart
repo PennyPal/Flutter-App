@@ -21,7 +21,10 @@ class TransactionAddPage extends StatelessWidget {
         title: Text(isEditing ? 'Edit Transaction' : 'Add Transaction'),
         leading: IconButton(
           onPressed: () => context.pop(),
-          icon: const Icon(Icons.close),
+          icon: const Icon(
+            Icons.close,
+            color: AppColors.onSurfaceDark,
+          ),
         ),
       ),
       body: const Center(
@@ -31,7 +34,7 @@ class TransactionAddPage extends StatelessWidget {
             Icon(
               Icons.add_circle_outline,
               size: 64,
-              color: AppColors.onSurface,
+              color: AppColors.onSurfaceDark,
             ),
             SizedBox(height: 16),
             Text(
@@ -39,7 +42,7 @@ class TransactionAddPage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: AppColors.onPrimary,
+                color: AppColors.onSurfaceDark,
               ),
             ),
             SizedBox(height: 8),

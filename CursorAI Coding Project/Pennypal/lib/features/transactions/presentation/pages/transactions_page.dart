@@ -18,13 +18,19 @@ class TransactionsPage extends StatelessWidget {
             onPressed: () {
               // TODO: Implement search
             },
-            icon: const Icon(Icons.search),
+            icon: const Icon(
+              Icons.search,
+              color: AppColors.onSurfaceDark,
+            ),
           ),
           IconButton(
             onPressed: () {
               // TODO: Implement filter
             },
-            icon: const Icon(Icons.filter_list),
+            icon: const Icon(
+              Icons.filter_list,
+              color: AppColors.onSurfaceDark,
+            ),
           ),
         ],
       ),
@@ -35,7 +41,7 @@ class TransactionsPage extends StatelessWidget {
             Icon(
               Icons.receipt_long,
               size: 64,
-              color: AppColors.onSurface,
+              color: AppColors.onSurfaceDark,
             ),
             SizedBox(height: 16),
             Text(
@@ -43,7 +49,7 @@ class TransactionsPage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: AppColors.onPrimary,
+                color: AppColors.onSurfaceDark,
               ),
             ),
             SizedBox(height: 8),

@@ -65,19 +65,43 @@ class _LoginPageState extends State<LoginPage> {
     
     return Scaffold(
       backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: Container(
+          margin: const EdgeInsets.all(8.0),
+          decoration: BoxDecoration(
+            color: AppColors.surfaceVariant,
+            shape: BoxShape.circle,
+          ),
+          child: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.black87,
+            ),
+            onPressed: () => context.go('/welcome'),
+            style: IconButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              foregroundColor: Colors.black87,
+              hoverColor: const Color(0xFFF3E8F2), // Darker pink for hover
+              shape: const CircleBorder(),
+            ),
+          ),
+        ),
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: AppColors.pinkGradient,
         ),
         child: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppTheme.xxl),
+          physics: const ClampingScrollPhysics(),
+          padding: const EdgeInsets.all(AppTheme.lg),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: AppTheme.xxxl),
                 
                 // Logo and title
                 Center(
@@ -85,13 +109,13 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       Image.asset(
                         'assets/images/pennypal_logo.png',
-                        width: 80,
-                        height: 80,
+                        width: 100,
+                        height: 100,
                       ),
-                      const SizedBox(height: AppTheme.lg),
+                      const SizedBox(height: AppTheme.sm),
                       Text(
                         'Sign In',
-                        style: theme.textTheme.displaySmall?.copyWith(
+                        style: theme.textTheme.displayLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: AppColors.onSecondary,
                         ),
@@ -108,7 +132,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 
-                const SizedBox(height: AppTheme.xxxl * 2),
+                const SizedBox(height: AppTheme.md),
                 
                 // Email field
                 TextFormField(
@@ -130,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 ),
                 
-                const SizedBox(height: AppTheme.lg),
+                const SizedBox(height: AppTheme.md),
                 
                 // Password field
                 TextFormField(
@@ -164,7 +188,7 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 ),
                 
-                const SizedBox(height: AppTheme.lg),
+                const SizedBox(height: AppTheme.md),
                 
                 // Forgot password
                 Align(
@@ -177,7 +201,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 
-                const SizedBox(height: AppTheme.xxl),
+                const SizedBox(height: AppTheme.lg),
                 
                 // Sign in button
                 ElevatedButton(
@@ -196,7 +220,7 @@ class _LoginPageState extends State<LoginPage> {
                       : const Text('Sign In'),
                 ),
                 
-                const SizedBox(height: AppTheme.xxl),
+                const SizedBox(height: AppTheme.lg),
                 
                 // Divider
                 Row(
@@ -215,7 +239,7 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
                 
-                const SizedBox(height: AppTheme.xxl),
+                const SizedBox(height: AppTheme.lg),
                 
                 // Social login buttons
                 OutlinedButton.icon(
@@ -226,7 +250,7 @@ class _LoginPageState extends State<LoginPage> {
                   label: const Text('Continue with Google'),
                 ),
                 
-                const SizedBox(height: AppTheme.lg),
+                const SizedBox(height: AppTheme.md),
                 
                 OutlinedButton.icon(
                   onPressed: () {

@@ -18,6 +18,7 @@ class AppColors {
   static const Color onPrimary = Color(0xFFFFFFFF); // White text on primary
   static const Color onSecondary = Color(0xFF374151); // Dark gray text
   static const Color onSurface = Color(0xFF6B7280); // Medium gray text
+  static const Color onSurfaceDark = Color(0xFF9D174D); // Dark pink/magenta for better contrast
 
   // Semantic Colors
   static const Color success = Color(0xFF10B981); // Positive transactions

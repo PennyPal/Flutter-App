@@ -37,7 +37,7 @@ class DashboardPage extends StatelessWidget {
                         'John Doe', // TODO: Get from user provider
                         style: theme.textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.onPrimary,
+                          color: AppColors.onSurfaceDark,
                         ),
                       ),
                     ],
@@ -48,10 +48,13 @@ class DashboardPage extends StatelessWidget {
                         onPressed: () {
                           // TODO: Show notifications
                         },
-                        icon: const Icon(Icons.notifications_outlined),
+                        icon: const Icon(
+                          Icons.notifications_outlined,
+                          color: AppColors.onSurfaceDark,
+                        ),
                         style: IconButton.styleFrom(
                           backgroundColor: AppColors.surface,
-                          foregroundColor: AppColors.onPrimary,
+                          foregroundColor: AppColors.onSurfaceDark,
                         ),
                       ),
                       const SizedBox(width: AppTheme.sm),
@@ -59,10 +62,13 @@ class DashboardPage extends StatelessWidget {
                         onPressed: () {
                           context.go(RouteNames.settings);
                         },
-                        icon: const Icon(Icons.settings_outlined),
+                        icon: const Icon(
+                          Icons.settings_outlined,
+                          color: AppColors.onSurfaceDark,
+                        ),
                         style: IconButton.styleFrom(
                           backgroundColor: AppColors.surface,
-                          foregroundColor: AppColors.onPrimary,
+                          foregroundColor: AppColors.onSurfaceDark,
                         ),
                       ),
                     ],
@@ -136,7 +142,7 @@ class DashboardPage extends StatelessWidget {
                 children: [
                   Expanded(
                     child: _QuickActionCard(
-                      title: 'Add Transaction',
+                      title: 'Add transaction',
                       icon: Icons.add,
                       onTap: () => context.go(RouteNames.transactionAdd),
                     ),
@@ -144,7 +150,7 @@ class DashboardPage extends StatelessWidget {
                   const SizedBox(width: AppTheme.lg),
                   Expanded(
                     child: _QuickActionCard(
-                      title: 'View Budgets',
+                      title: 'Budget',
                       icon: Icons.pie_chart_outline,
                       onTap: () => context.go(RouteNames.budgets),
                     ),
@@ -162,7 +168,7 @@ class DashboardPage extends StatelessWidget {
                     'Recent Transactions',
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppColors.onPrimary,
+                      color: AppColors.onSurfaceDark,
                     ),
                   ),
                   TextButton(
@@ -184,7 +190,7 @@ class DashboardPage extends StatelessWidget {
                 'Budget Overview',
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.onPrimary,
+                  color: AppColors.onSurfaceDark,
                 ),
               ),
               
@@ -202,7 +208,7 @@ class DashboardPage extends StatelessWidget {
                     'Goals Progress',
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppColors.onPrimary,
+                      color: AppColors.onSurfaceDark,
                     ),
                   ),
                   TextButton(
@@ -334,7 +340,7 @@ class _QuickActionCard extends StatelessWidget {
               title,
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: AppColors.onPrimary,
+                color: AppColors.onSurfaceDark,
               ),
               textAlign: TextAlign.center,
             ),
