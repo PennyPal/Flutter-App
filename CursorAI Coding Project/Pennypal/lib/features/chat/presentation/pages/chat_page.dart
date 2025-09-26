@@ -48,17 +48,29 @@ class _ChatPageState extends State<ChatPage> {
 
     _scrollToBottom();
 
-    // Get AI response from Gemini API
-    final aiResponse = await GeminiService.sendMessage(userMessage);
-    
-    setState(() {
-      _messages.add(ChatMessage(
-        text: aiResponse,
-        isUser: false,
-        timestamp: DateTime.now(),
-      ));
-      _isLoading = false;
-    });
+    try {
+      // Get AI response from Gemini API
+      final aiResponse = await GeminiService.sendMessage(userMessage);
+      
+      setState(() {
+        _messages.add(ChatMessage(
+          text: aiResponse,
+          isUser: false,
+          timestamp: DateTime.now(),
+        ));
+        _isLoading = false;
+      });
+    } catch (e) {
+      // Handle API key not configured error
+      setState(() {
+        _messages.add(ChatMessage(
+          text: '🔑 Please upload your Gemini API key to start chatting with AI!\n\nYou can get a free API key from Google AI Studio and configure it in the app settings.\n\nError: ${e.toString()}',
+          isUser: false,
+          timestamp: DateTime.now(),
+        ));
+        _isLoading = false;
+      });
+    }
 
     _scrollToBottom();
   }

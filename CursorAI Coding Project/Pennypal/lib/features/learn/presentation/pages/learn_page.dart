@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../enhanced_methods.dart';
 
 /// Comprehensive Learning page with financial education content
 class LearnPage extends StatefulWidget {
@@ -13,6 +15,10 @@ class LearnPage extends StatefulWidget {
 class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin {
   late TabController _tabController;
   String _searchQuery = '';
+  
+  // Track completed lessons
+  final Set<String> _completedLessons = {};
+  final Set<String> _bookmarkedLessons = {};
 
   @override
   void initState() {
@@ -250,7 +256,17 @@ class _FeaturedCourseCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     
-    return Container(
+    return InkWell(
+      onTap: () => LearnPageMethods.startDetailedCourse(context, {
+        'title': 'Investment Basics',
+        'color': AppColors.success,
+        'icon': Icons.trending_up,
+        'lessons': 8,
+        'duration': '2 hours',
+        'rating': 4.9,
+      }),
+      borderRadius: BorderRadius.circular(AppTheme.radiusLg.x),
+      child: Container(
       padding: const EdgeInsets.all(AppTheme.lg),
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -367,8 +383,10 @@ class _FeaturedCourseCard extends StatelessWidget {
           ),
         ],
       ),
+    ),
     );
   }
+
 }
 
 class _QuickActionsGrid extends StatelessWidget {
@@ -732,9 +750,7 @@ class _CourseCard extends StatelessWidget {
               ),
               const Spacer(),
               ElevatedButton(
-                onPressed: () {
-                  // TODO: Start course
-                },
+                onPressed: () => LearnPageMethods.startDetailedCourse(context, course),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: course['color'] as Color,
                   foregroundColor: AppColors.onPrimary,
@@ -894,9 +910,7 @@ class _ToolTile extends StatelessWidget {
           size: 16,
           color: AppColors.onSurface,
         ),
-        onTap: () {
-          // TODO: Navigate to tool
-        },
+        onTap: () => LearnPageMethods.openTool(context, tool['title'] as String),
       ),
     );
   }
