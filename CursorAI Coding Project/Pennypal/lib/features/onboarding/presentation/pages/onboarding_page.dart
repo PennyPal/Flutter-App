@@ -143,8 +143,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
       ),
     );
     
-    // Navigate to dashboard - user is now fully set up
-    context.go(RouteNames.dashboard);
+    // Navigate to home dashboard - user is now fully set up
+    context.go(RouteNames.home);
   }
 
   @override
