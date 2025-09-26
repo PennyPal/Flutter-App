@@ -36,6 +36,9 @@ class RouteNames {
   static const String lesson = '/learn/lesson';
   static const String quiz = '/learn/quiz';
 
+  // Chat & AI
+  static const String chat = '/chat';
+
   // Quests & Rewards
   static const String quests = '/quests';
   static const String achievements = '/achievements';

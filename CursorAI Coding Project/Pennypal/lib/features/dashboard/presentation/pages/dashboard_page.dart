@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../shared/services/user_service.dart';
 
 /// Main dashboard/home page
 class DashboardPage extends StatelessWidget {
@@ -28,16 +29,10 @@ class DashboardPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Good morning,',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: AppColors.onSecondary,
-                        ),
-                      ),
-                      Text(
-                        'John Doe', // TODO: Get from user provider
+                        UserService().getGreetingMessage(),
                         style: theme.textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.onSurfaceDark,
+                          color: AppColors.onBackground,
                         ),
                       ),
                     ],
@@ -48,13 +43,10 @@ class DashboardPage extends StatelessWidget {
                         onPressed: () {
                           // TODO: Show notifications
                         },
-                        icon: const Icon(
-                          Icons.notifications_outlined,
-                          color: AppColors.onSurfaceDark,
-                        ),
+                        icon: const Icon(Icons.notifications_outlined),
                         style: IconButton.styleFrom(
                           backgroundColor: AppColors.surface,
-                          foregroundColor: AppColors.onSurfaceDark,
+                          foregroundColor: AppColors.onPrimary,
                         ),
                       ),
                       const SizedBox(width: AppTheme.sm),
@@ -62,13 +54,10 @@ class DashboardPage extends StatelessWidget {
                         onPressed: () {
                           context.go(RouteNames.settings);
                         },
-                        icon: const Icon(
-                          Icons.settings_outlined,
-                          color: AppColors.onSurfaceDark,
-                        ),
+                        icon: const Icon(Icons.settings_outlined),
                         style: IconButton.styleFrom(
                           backgroundColor: AppColors.surface,
-                          foregroundColor: AppColors.onSurfaceDark,
+                          foregroundColor: AppColors.onPrimary,
                         ),
                       ),
                     ],
@@ -99,7 +88,7 @@ class DashboardPage extends StatelessWidget {
                     Text(
                       'Total Balance',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: AppColors.onPrimary.withOpacity(0.8),
+                        color: AppColors.onBackground.withOpacity(0.8),
                       ),
                     ),
                     const SizedBox(height: AppTheme.sm),
@@ -107,7 +96,7 @@ class DashboardPage extends StatelessWidget {
                       '\$12,450.00', // TODO: Get from provider
                       style: theme.textTheme.displayMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.onPrimary,
+                        color: AppColors.onBackground,
                       ),
                     ),
                     const SizedBox(height: AppTheme.lg),
@@ -142,7 +131,7 @@ class DashboardPage extends StatelessWidget {
                 children: [
                   Expanded(
                     child: _QuickActionCard(
-                      title: 'Add transaction',
+                      title: 'Add Transaction',
                       icon: Icons.add,
                       onTap: () => context.go(RouteNames.transactionAdd),
                     ),
@@ -150,7 +139,7 @@ class DashboardPage extends StatelessWidget {
                   const SizedBox(width: AppTheme.lg),
                   Expanded(
                     child: _QuickActionCard(
-                      title: 'Budget',
+                      title: 'View Budgets',
                       icon: Icons.pie_chart_outline,
                       onTap: () => context.go(RouteNames.budgets),
                     ),
@@ -168,7 +157,7 @@ class DashboardPage extends StatelessWidget {
                     'Recent Transactions',
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppColors.onSurfaceDark,
+                      color: AppColors.onBackground,
                     ),
                   ),
                   TextButton(
@@ -190,7 +179,7 @@ class DashboardPage extends StatelessWidget {
                 'Budget Overview',
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.onSurfaceDark,
+                  color: AppColors.onBackground,
                 ),
               ),
               
@@ -208,7 +197,7 @@ class DashboardPage extends StatelessWidget {
                     'Goals Progress',
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppColors.onSurfaceDark,
+                      color: AppColors.onBackground,
                     ),
                   ),
                   TextButton(
@@ -276,14 +265,14 @@ class _BalanceItem extends StatelessWidget {
             Text(
               label,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: AppColors.onPrimary.withOpacity(0.8),
+                color: AppColors.onBackground.withOpacity(0.8),
               ),
             ),
             Text(
               amount,
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: AppColors.onPrimary,
+                color: AppColors.onBackground,
               ),
             ),
           ],
@@ -340,7 +329,7 @@ class _QuickActionCard extends StatelessWidget {
               title,
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: AppColors.onSurfaceDark,
+                color: AppColors.onBackground,
               ),
               textAlign: TextAlign.center,
             ),
@@ -399,7 +388,7 @@ class _TransactionTile extends StatelessWidget {
                   title,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
-                    color: AppColors.onPrimary,
+                    color: AppColors.onBackground,
                   ),
                 ),
                 Text(
@@ -442,7 +431,7 @@ class _BudgetProgressCard extends StatelessWidget {
             'Monthly Budget',
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w500,
-              color: AppColors.onPrimary,
+              color: AppColors.onBackground,
             ),
           ),
           const SizedBox(height: AppTheme.md),
@@ -511,7 +500,7 @@ class _GoalProgressCard extends StatelessWidget {
                   'Vacation Fund',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
-                    color: AppColors.onPrimary,
+                    color: AppColors.onBackground,
                   ),
                 ),
                 const SizedBox(height: AppTheme.xs),

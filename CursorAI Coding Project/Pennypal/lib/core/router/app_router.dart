@@ -12,8 +12,10 @@ import '../../features/dashboard/presentation/pages/dashboard_page.dart';
 import '../../features/transactions/presentation/pages/transactions_page.dart';
 import '../../features/transactions/presentation/pages/transaction_add_page.dart';
 import '../../features/budgets/presentation/pages/budgets_page.dart';
+import '../../features/budgets/presentation/pages/budget_add_page.dart';
 import '../../features/goals/presentation/pages/goals_page.dart';
 import '../../features/learn/presentation/pages/learn_page.dart';
+import '../../features/chat/presentation/pages/chat_page.dart';
 import '../../features/quests/presentation/pages/quests_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
@@ -116,6 +118,13 @@ class AppRouter {
               builder: (context, state) => const LearnPage(),
             ),
 
+            // Chat & AI
+            GoRoute(
+              path: RouteNames.chat,
+              name: 'chat',
+              builder: (context, state) => const ChatPage(),
+            ),
+
             // Quests
             GoRoute(
               path: RouteNames.quests,
@@ -130,6 +139,20 @@ class AppRouter {
               builder: (context, state) => const ProfilePage(),
             ),
           ],
+        ),
+
+        // Add Transaction (outside main layout)
+        GoRoute(
+          path: RouteNames.transactionAdd,
+          name: 'transactionAdd',
+          builder: (context, state) => const TransactionAddPage(),
+        ),
+
+        // Add Budget (outside main layout)
+        GoRoute(
+          path: RouteNames.budgetAdd,
+          name: 'budgetAdd',
+          builder: (context, state) => const BudgetAddPage(),
         ),
 
         // Settings (outside main layout)
