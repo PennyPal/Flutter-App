@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../shared/services/user_service.dart';
 
 /// Registration page for new users
 class RegisterPage extends StatefulWidget {
@@ -53,8 +54,15 @@ class _RegisterPageState extends State<RegisterPage> {
       // TODO: Implement actual registration
       await Future.delayed(const Duration(seconds: 2));
       
+      // Save registration data to user service
+      UserService().setRegistrationData(
+        name: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+      );
+      
       if (mounted) {
-        context.go(RouteNames.home);
+        // Navigate to onboarding for user setup
+        context.go(RouteNames.onboarding);
       }
     } catch (e) {
       if (mounted) {
