@@ -3,34 +3,35 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../data/services/transaction_service.dart';
 
-/// Add/Edit transaction page with full functionality
-class TransactionAddPage extends StatefulWidget {
-  const TransactionAddPage({
+/// Add/Edit budget page with savings goals functionality
+class BudgetAddPage extends StatefulWidget {
+  const BudgetAddPage({
     super.key,
-    this.transactionId,
+    this.budgetId,
   });
 
-  final String? transactionId;
+  final String? budgetId;
 
   @override
-  State<TransactionAddPage> createState() => _TransactionAddPageState();
+  State<BudgetAddPage> createState() => _BudgetAddPageState();
 }
 
-class _TransactionAddPageState extends State<TransactionAddPage> {
+class _BudgetAddPageState extends State<BudgetAddPage> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
+  final _targetAmountController = TextEditingController();
   final _notesController = TextEditingController();
-  final TransactionService _transactionService = TransactionService();
   
-  String _selectedType = 'expense';
+  String _selectedType = 'spending'; // spending or savings
   String _selectedCategory = 'Food';
-  DateTime _selectedDate = DateTime.now();
+  String _selectedPeriod = 'Monthly';
+  DateTime _targetDate = DateTime.now().add(const Duration(days: 365));
   IconData _selectedIcon = Icons.restaurant;
+  Color _selectedColor = AppColors.warning;
   
-  final List<Map<String, dynamic>> _categories = [
+  final List<Map<String, dynamic>> _spendingCategories = [
     {'name': 'Food', 'icon': Icons.restaurant, 'color': AppColors.warning},
     {'name': 'Transportation', 'icon': Icons.directions_car, 'color': AppColors.info},
     {'name': 'Entertainment', 'icon': Icons.movie, 'color': AppColors.secondary},
@@ -38,32 +39,40 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
     {'name': 'Shopping', 'icon': Icons.shopping_bag, 'color': AppColors.primary},
     {'name': 'Healthcare', 'icon': Icons.health_and_safety, 'color': AppColors.success},
     {'name': 'Education', 'icon': Icons.school, 'color': Colors.purple},
-    {'name': 'Travel', 'icon': Icons.flight, 'color': Colors.blue},
     {'name': 'Groceries', 'icon': Icons.shopping_cart, 'color': Colors.green},
-    {'name': 'Gas', 'icon': Icons.local_gas_station, 'color': Colors.orange},
-    {'name': 'Coffee', 'icon': Icons.local_cafe, 'color': Colors.brown},
-    {'name': 'Salary', 'icon': Icons.work, 'color': AppColors.success},
-    {'name': 'Investment', 'icon': Icons.trending_up, 'color': AppColors.primary},
     {'name': 'Other', 'icon': Icons.category, 'color': AppColors.onSurface},
   ];
 
-  bool get _isEditing => widget.transactionId != null;
+  final List<Map<String, dynamic>> _savingsGoals = [
+    {'name': 'Emergency Fund', 'icon': Icons.security, 'color': AppColors.error},
+    {'name': 'Vacation', 'icon': Icons.flight, 'color': Colors.blue},
+    {'name': 'New Car', 'icon': Icons.directions_car, 'color': AppColors.info},
+    {'name': 'House Down Payment', 'icon': Icons.home, 'color': AppColors.success},
+    {'name': 'Wedding', 'icon': Icons.favorite, 'color': Colors.pink},
+    {'name': 'Education', 'icon': Icons.school, 'color': Colors.purple},
+    {'name': 'Retirement', 'icon': Icons.elderly, 'color': Colors.brown},
+    {'name': 'Investment', 'icon': Icons.trending_up, 'color': AppColors.primary},
+    {'name': 'Gadgets', 'icon': Icons.phone_android, 'color': Colors.orange},
+    {'name': 'Other Goal', 'icon': Icons.flag, 'color': AppColors.secondary},
+  ];
+
+  final List<String> _periods = ['Weekly', 'Monthly', 'Quarterly', 'Yearly'];
+
+  bool get _isEditing => widget.budgetId != null;
+  bool get _isSavingsGoal => _selectedType == 'savings';
 
   @override
   void initState() {
     super.initState();
     if (_isEditing) {
-      _loadTransactionData();
+      _loadBudgetData();
     }
   }
 
-  void _loadTransactionData() {
-    // TODO: Load transaction data from storage/database
-    // For now, just populate with sample data
-    _titleController.text = 'Sample Transaction';
-    _amountController.text = '25.50';
-    _selectedType = 'expense';
-    _selectedCategory = 'Food';
+  void _loadBudgetData() {
+    // TODO: Load budget data from storage/database
+    _titleController.text = 'Sample Budget';
+    _amountController.text = '500.00';
   }
 
   @override
@@ -73,7 +82,7 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(_isEditing ? 'Edit Transaction' : 'Add Transaction'),
+        title: Text(_isEditing ? 'Edit Budget' : (_isSavingsGoal ? 'Create Savings Goal' : 'Create Budget')),
         backgroundColor: AppColors.background,
         elevation: 0,
         leading: IconButton(
@@ -82,7 +91,7 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
         ),
         actions: [
           TextButton(
-            onPressed: _saveTransaction,
+            onPressed: _saveBudget,
             child: Text(
               _isEditing ? 'Update' : 'Save',
               style: const TextStyle(
@@ -100,13 +109,8 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Transaction Type Selector
+              // Budget Type Selector
               _buildTypeSelector(),
-              
-              const SizedBox(height: AppTheme.xl),
-              
-              // Amount Input
-              _buildAmountInput(),
               
               const SizedBox(height: AppTheme.xl),
               
@@ -115,13 +119,24 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
               
               const SizedBox(height: AppTheme.xl),
               
-              // Category Selector
+              // Category/Goal Selector
               _buildCategorySelector(),
               
               const SizedBox(height: AppTheme.xl),
               
-              // Date Selector
-              _buildDateSelector(),
+              // Amount Input
+              _buildAmountInput(),
+              
+              if (_isSavingsGoal) ...[
+                const SizedBox(height: AppTheme.xl),
+                _buildTargetAmountInput(),
+                
+                const SizedBox(height: AppTheme.xl),
+                _buildTargetDateSelector(),
+              ] else ...[
+                const SizedBox(height: AppTheme.xl),
+                _buildPeriodSelector(),
+              ],
               
               const SizedBox(height: AppTheme.xl),
               
@@ -144,7 +159,7 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Transaction Type',
+          'Type',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
             color: AppColors.onBackground,
@@ -155,24 +170,136 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
           children: [
             Expanded(
               child: _TypeCard(
-                title: 'Expense',
-                icon: Icons.trending_down,
-                color: AppColors.error,
-                isSelected: _selectedType == 'expense',
-                onTap: () => setState(() => _selectedType = 'expense'),
+                title: 'Spending Budget',
+                icon: Icons.account_balance_wallet,
+                color: AppColors.warning,
+                isSelected: _selectedType == 'spending',
+                onTap: () => setState(() => _selectedType = 'spending'),
               ),
             ),
             const SizedBox(width: AppTheme.md),
             Expanded(
               child: _TypeCard(
-                title: 'Income',
-                icon: Icons.trending_up,
+                title: 'Savings Goal',
+                icon: Icons.savings,
                 color: AppColors.success,
-                isSelected: _selectedType == 'income',
-                onTap: () => setState(() => _selectedType = 'income'),
+                isSelected: _selectedType == 'savings',
+                onTap: () => setState(() => _selectedType = 'savings'),
               ),
             ),
           ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTitleInput() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          _isSavingsGoal ? 'Goal Name' : 'Budget Name',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: AppColors.onBackground,
+          ),
+        ),
+        const SizedBox(height: AppTheme.md),
+        TextFormField(
+          controller: _titleController,
+          decoration: InputDecoration(
+            hintText: _isSavingsGoal ? 'e.g., "Vacation to Japan"' : 'e.g., "Monthly Food Budget"',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
+              borderSide: const BorderSide(color: AppColors.primary, width: 2),
+            ),
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter a name';
+            }
+            return null;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCategorySelector() {
+    final categories = _isSavingsGoal ? _savingsGoals : _spendingCategories;
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          _isSavingsGoal ? 'Savings Goal' : 'Category',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: AppColors.onBackground,
+          ),
+        ),
+        const SizedBox(height: AppTheme.md),
+        SizedBox(
+          height: 120,
+          child: GridView.builder(
+            scrollDirection: Axis.horizontal,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 1.2,
+              crossAxisSpacing: AppTheme.sm,
+              mainAxisSpacing: AppTheme.sm,
+            ),
+            itemCount: categories.length,
+            itemBuilder: (context, index) {
+              final category = categories[index];
+              final isSelected = _selectedCategory == category['name'];
+              
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedCategory = category['name'];
+                    _selectedIcon = category['icon'];
+                    _selectedColor = category['color'];
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(AppTheme.sm),
+                  decoration: BoxDecoration(
+                    color: isSelected ? AppColors.primary.withOpacity(0.1) : AppColors.surface,
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
+                    border: Border.all(
+                      color: isSelected ? AppColors.primary : AppColors.onSurface.withOpacity(0.2),
+                      width: isSelected ? 2 : 1,
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        category['icon'],
+                        color: isSelected ? AppColors.primary : category['color'],
+                        size: 24,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        category['name'],
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: isSelected ? AppColors.primary : AppColors.onBackground,
+                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
         ),
       ],
     );
@@ -183,7 +310,7 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Amount',
+          _isSavingsGoal ? 'Monthly Savings Amount' : 'Budget Amount',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
             color: AppColors.onBackground,
@@ -198,10 +325,10 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
           ],
           decoration: InputDecoration(
             prefixText: '\$ ',
-            prefixStyle: TextStyle(
-              color: _selectedType == 'income' ? AppColors.success : AppColors.error,
+            prefixStyle: const TextStyle(
+              color: AppColors.primary,
               fontWeight: FontWeight.w600,
-              fontSize: 24,
+              fontSize: 20,
             ),
             hintText: '0.00',
             border: OutlineInputBorder(
@@ -212,10 +339,10 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
               borderSide: const BorderSide(color: AppColors.primary, width: 2),
             ),
           ),
-          style: TextStyle(
-            fontSize: 24,
+          style: const TextStyle(
+            fontSize: 20,
             fontWeight: FontWeight.w600,
-            color: _selectedType == 'income' ? AppColors.success : AppColors.error,
+            color: AppColors.primary,
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -232,12 +359,12 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
     );
   }
 
-  Widget _buildTitleInput() {
+  Widget _buildTargetAmountInput() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Title',
+          'Target Amount',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
             color: AppColors.onBackground,
@@ -245,9 +372,19 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
         ),
         const SizedBox(height: AppTheme.md),
         TextFormField(
-          controller: _titleController,
+          controller: _targetAmountController,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+          ],
           decoration: InputDecoration(
-            hintText: 'Enter transaction title',
+            prefixText: '\$ ',
+            prefixStyle: const TextStyle(
+              color: AppColors.success,
+              fontWeight: FontWeight.w600,
+              fontSize: 20,
+            ),
+            hintText: '0.00',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
             ),
@@ -256,9 +393,22 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
               borderSide: const BorderSide(color: AppColors.primary, width: 2),
             ),
           ),
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: AppColors.success,
+          ),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter a title';
+              return 'Please enter a target amount';
+            }
+            final amount = double.tryParse(value);
+            if (amount == null || amount <= 0) {
+              return 'Please enter a valid amount';
+            }
+            final monthlyAmount = double.tryParse(_amountController.text) ?? 0;
+            if (amount <= monthlyAmount) {
+              return 'Target should be greater than monthly amount';
             }
             return null;
           },
@@ -267,90 +417,49 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
     );
   }
 
-  Widget _buildCategorySelector() {
+  Widget _buildPeriodSelector() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Category',
+          'Period',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
             color: AppColors.onBackground,
           ),
         ),
         const SizedBox(height: AppTheme.md),
-        SizedBox(
-          height: 100,
-          child: GridView.builder(
-            scrollDirection: Axis.horizontal,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 1.0,
-              crossAxisSpacing: AppTheme.xs,
-              mainAxisSpacing: AppTheme.xs,
+        DropdownButtonFormField<String>(
+          value: _selectedPeriod,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
             ),
-            itemCount: _categories.length,
-            itemBuilder: (context, index) {
-              final category = _categories[index];
-              final isSelected = _selectedCategory == category['name'];
-              
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedCategory = category['name'];
-                    _selectedIcon = category['icon'];
-                  });
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: isSelected ? AppColors.primary.withOpacity(0.1) : AppColors.surface,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: isSelected ? AppColors.primary : AppColors.onSurface.withOpacity(0.2),
-                      width: isSelected ? 2 : 1,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        category['icon'],
-                        color: isSelected ? AppColors.primary : category['color'],
-                        size: 18,
-                      ),
-                      const SizedBox(height: 2),
-                      Flexible(
-                        child: Text(
-                          category['name'],
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: isSelected ? AppColors.primary : AppColors.onBackground,
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                            fontSize: 10,
-                          ),
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
+              borderSide: const BorderSide(color: AppColors.primary, width: 2),
+            ),
           ),
+          items: _periods.map((period) => DropdownMenuItem(
+            value: period,
+            child: Text(period),
+          )).toList(),
+          onChanged: (value) {
+            setState(() {
+              _selectedPeriod = value!;
+            });
+          },
         ),
       ],
     );
   }
 
-  Widget _buildDateSelector() {
+  Widget _buildTargetDateSelector() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Date',
+          'Target Date',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
             color: AppColors.onBackground,
@@ -358,7 +467,7 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
         ),
         const SizedBox(height: AppTheme.md),
         GestureDetector(
-          onTap: _selectDate,
+          onTap: _selectTargetDate,
           child: Container(
             padding: const EdgeInsets.all(AppTheme.lg),
             decoration: BoxDecoration(
@@ -378,7 +487,7 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
                 ),
                 const SizedBox(width: AppTheme.md),
                 Text(
-                  _formatDate(_selectedDate),
+                  _formatTargetDate(_targetDate),
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: AppColors.onBackground,
                   ),
@@ -431,7 +540,7 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: _saveTransaction,
+        onPressed: _saveBudget,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.onPrimary,
@@ -441,7 +550,9 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
           ),
         ),
         child: Text(
-          _isEditing ? 'Update Transaction' : 'Add Transaction',
+          _isEditing 
+              ? (_isSavingsGoal ? 'Update Goal' : 'Update Budget')
+              : (_isSavingsGoal ? 'Create Goal' : 'Create Budget'),
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -451,70 +562,55 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
     );
   }
 
-  void _selectDate() async {
+  void _selectTargetDate() async {
     final date = await showDatePicker(
       context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
+      initialDate: _targetDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365 * 10)),
     );
     
     if (date != null) {
       setState(() {
-        _selectedDate = date;
+        _targetDate = date;
       });
     }
   }
 
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final difference = now.difference(date).inDays;
-    
-    if (difference == 0) {
-      return 'Today';
-    } else if (difference == 1) {
-      return 'Yesterday';
-    } else if (difference == -1) {
-      return 'Tomorrow';
-    } else {
-      return '${date.day}/${date.month}/${date.year}';
-    }
+  String _formatTargetDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
   }
 
-  void _saveTransaction() {
+  void _saveBudget() {
     if (_formKey.currentState!.validate()) {
-      final amount = double.parse(_amountController.text);
-      final selectedColor = _categories.firstWhere((cat) => cat['name'] == _selectedCategory)['color'];
-      
-      final transaction = {
-        'id': _isEditing ? widget.transactionId : DateTime.now().millisecondsSinceEpoch.toString(),
+      // TODO: Save budget/goal to storage/database
+      final budget = {
+        'id': _isEditing ? widget.budgetId : DateTime.now().millisecondsSinceEpoch.toString(),
         'title': _titleController.text,
-        'amount': _selectedType == 'expense' ? -amount : amount,
         'category': _selectedCategory,
-        'date': _selectedDate,
+        'amount': double.parse(_amountController.text),
         'type': _selectedType,
+        'period': _isSavingsGoal ? null : _selectedPeriod,
+        'targetAmount': _isSavingsGoal ? double.parse(_targetAmountController.text) : null,
+        'targetDate': _isSavingsGoal ? _targetDate : null,
         'icon': _selectedIcon,
-        'color': selectedColor,
+        'color': _selectedColor,
         'notes': _notesController.text,
       };
-      
-      if (_isEditing) {
-        _transactionService.updateTransaction(widget.transactionId!, transaction);
-      } else {
-        _transactionService.addTransaction(transaction);
-      }
       
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            _isEditing ? 'Transaction updated successfully!' : 'Transaction added successfully!',
+            _isEditing 
+                ? (_isSavingsGoal ? 'Goal updated successfully!' : 'Budget updated successfully!')
+                : (_isSavingsGoal ? 'Goal created successfully!' : 'Budget created successfully!'),
           ),
           backgroundColor: AppColors.success,
         ),
       );
       
-      // Go back to transactions page
+      // Go back to budgets page
       context.pop();
     }
   }
@@ -523,6 +619,7 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
   void dispose() {
     _titleController.dispose();
     _amountController.dispose();
+    _targetAmountController.dispose();
     _notesController.dispose();
     super.dispose();
   }
@@ -571,6 +668,7 @@ class _TypeCard extends StatelessWidget {
                 color: isSelected ? color : AppColors.onBackground,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
