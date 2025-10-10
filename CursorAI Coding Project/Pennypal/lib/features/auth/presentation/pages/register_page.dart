@@ -4,6 +4,7 @@ import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../shared/services/user_service.dart';
+import '../../data/services/auth_service.dart';
 
 /// Registration page for new users
 class RegisterPage extends StatefulWidget {
@@ -19,6 +20,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _authService = AuthService();
   
   bool _isLoading = false;
   bool _obscurePassword = true;
@@ -51,8 +53,11 @@ class _RegisterPageState extends State<RegisterPage> {
     });
 
     try {
-      // TODO: Implement actual registration
-      await Future.delayed(const Duration(seconds: 2));
+      await _authService.signUp(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        name: _nameController.text.trim(),
+      );
       
       // Save registration data to user service
       UserService().setRegistrationData(
@@ -68,8 +73,9 @@ class _RegisterPageState extends State<RegisterPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to sign up: ${e.toString()}'),
+            content: Text(e.toString().replaceAll('Exception: ', '')),
             backgroundColor: AppColors.error,
+            duration: const Duration(seconds: 4),
           ),
         );
       }
