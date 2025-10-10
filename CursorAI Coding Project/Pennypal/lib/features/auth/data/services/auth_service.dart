@@ -1,6 +1,5 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
-import 'package:appwrite/enums.dart';
 import '../../../../core/services/appwrite_service.dart';
 
 /// Authentication service using Appwrite
@@ -59,7 +58,7 @@ class AuthService {
         // Ignore if no session exists
       }
 
-      final session = await _account.createEmailPasswordSession(
+      final session = await _account.createEmailSession(
         email: email,
         password: password,
       );
@@ -75,7 +74,7 @@ class AuthService {
   Future<void> signInWithGoogle() async {
     try {
       await _account.createOAuth2Session(
-        provider: OAuthProvider.google,
+        provider: 'google',
         // Success URL after OAuth (deep link to your app)
         success: 'pennypal://oauth-success',
         // Failure URL after OAuth
@@ -92,7 +91,7 @@ class AuthService {
   Future<void> signInWithApple() async {
     try {
       await _account.createOAuth2Session(
-        provider: OAuthProvider.apple,
+        provider: 'apple',
         success: 'pennypal://oauth-success',
         failure: 'pennypal://oauth-failure',
       );
@@ -160,6 +159,7 @@ class AuthService {
         userId: userId,
         secret: secret,
         password: password,
+        passwordAgain: password,
       );
     } on AppwriteException catch (e) {
       throw _handleAppwriteException(e);
@@ -221,7 +221,7 @@ class AuthService {
     required String phone,
   }) async {
     try {
-      return await _account.createPhoneToken(
+      return await _account.createPhoneSession(
         userId: ID.unique(),
         phone: phone,
       );
@@ -238,7 +238,7 @@ class AuthService {
     required String secret,
   }) async {
     try {
-      return await _account.createSession(
+      return await _account.updatePhoneSession(
         userId: userId,
         secret: secret,
       );
@@ -251,36 +251,20 @@ class AuthService {
 
   /// Create email OTP session
   /// Sends OTP code to the provided email
+  /// Note: This method is not fully implemented in Appwrite 11.0.1
   Future<Token> createEmailToken({
     required String email,
   }) async {
-    try {
-      return await _account.createEmailToken(
-        userId: ID.unique(),
-        email: email,
-      );
-    } on AppwriteException catch (e) {
-      throw _handleAppwriteException(e);
-    } catch (e) {
-      throw Exception('Failed to send email OTP: ${e.toString()}');
-    }
+    throw Exception('Email OTP is not implemented in Appwrite 11.0.1. Use email/password authentication instead.');
   }
 
   /// Verify email OTP and create session
+  /// Note: This method is not fully implemented in Appwrite 11.0.1
   Future<Session> verifyEmailToken({
     required String userId,
     required String secret,
   }) async {
-    try {
-      return await _account.createSession(
-        userId: userId,
-        secret: secret,
-      );
-    } on AppwriteException catch (e) {
-      throw _handleAppwriteException(e);
-    } catch (e) {
-      throw Exception('Failed to verify email OTP: ${e.toString()}');
-    }
+    throw Exception('Email OTP verification is not implemented in Appwrite 11.0.1. Use email/password authentication instead.');
   }
 
   /// Create magic URL session (passwordless email login)
@@ -288,7 +272,7 @@ class AuthService {
     required String email,
   }) async {
     try {
-      return await _account.createMagicURLToken(
+      return await _account.createMagicURLSession(
         userId: ID.unique(),
         email: email,
         url: 'pennypal://auth/magic-url',
