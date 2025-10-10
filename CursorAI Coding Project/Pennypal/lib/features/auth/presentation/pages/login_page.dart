@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../data/services/auth_service.dart';
+import 'otp_login_page.dart';
 
 /// Login page with email/password authentication
 class LoginPage extends StatefulWidget {
@@ -16,6 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _authService = AuthService();
   
   bool _isLoading = false;
   bool _obscurePassword = true;
@@ -35,8 +38,10 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      // TODO: Implement actual authentication
-      await Future.delayed(const Duration(seconds: 2));
+      await _authService.signInWithEmail(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
       
       if (mounted) {
         context.go(RouteNames.home);
@@ -45,8 +50,9 @@ class _LoginPageState extends State<LoginPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to sign in: ${e.toString()}'),
+            content: Text(e.toString().replaceAll('Exception: ', '')),
             backgroundColor: AppColors.error,
+            duration: const Duration(seconds: 4),
           ),
         );
       }
@@ -57,6 +63,109 @@ class _LoginPageState extends State<LoginPage> {
         });
       }
     }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await _authService.signInWithGoogle();
+      
+      if (mounted) {
+        context.go(RouteNames.home);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceAll('Exception: ', '')),
+            backgroundColor: AppColors.error,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _signInWithApple() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await _authService.signInWithApple();
+      
+      if (mounted) {
+        context.go(RouteNames.home);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceAll('Exception: ', '')),
+            backgroundColor: AppColors.error,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _forgotPassword() async {
+    if (_emailController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter your email address first'),
+          backgroundColor: AppColors.warning,
+        ),
+      );
+      return;
+    }
+
+    try {
+      await _authService.sendPasswordRecoveryEmail(_emailController.text.trim());
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Password recovery email sent! Check your inbox.'),
+            backgroundColor: AppColors.success,
+            duration: Duration(seconds: 4),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceAll('Exception: ', '')),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+
+  void _goToOTPLogin() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const OTPLoginPage(),
+      ),
+    );
   }
 
   @override
@@ -194,9 +303,7 @@ class _LoginPageState extends State<LoginPage> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {
-                      // TODO: Implement forgot password
-                    },
+                    onPressed: _forgotPassword,
                     child: const Text('Forgot Password?'),
                   ),
                 ),
@@ -243,9 +350,7 @@ class _LoginPageState extends State<LoginPage> {
                 
                 // Social login buttons
                 OutlinedButton.icon(
-                  onPressed: () {
-                    // TODO: Implement Google sign in
-                  },
+                  onPressed: _isLoading ? null : _signInWithGoogle,
                   icon: const Icon(Icons.g_mobiledata, size: 24),
                   label: const Text('Continue with Google'),
                 ),
@@ -253,11 +358,21 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: AppTheme.md),
                 
                 OutlinedButton.icon(
-                  onPressed: () {
-                    // TODO: Implement Apple sign in
-                  },
+                  onPressed: _isLoading ? null : _signInWithApple,
                   icon: const Icon(Icons.apple, size: 24),
                   label: const Text('Continue with Apple'),
+                ),
+                
+                const SizedBox(height: AppTheme.xl),
+                
+                // OTP Login
+                OutlinedButton.icon(
+                  onPressed: _isLoading ? null : _goToOTPLogin,
+                  icon: const Icon(Icons.sms_outlined, size: 24),
+                  label: const Text('Login with OTP'),
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: AppColors.primary),
+                  ),
                 ),
                 
                 const SizedBox(height: AppTheme.xxxl),

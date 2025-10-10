@@ -51,6 +51,7 @@ class RouteNames {
   static const String privacySettings = '/settings/privacy';
   static const String notificationSettings = '/settings/notifications';
   static const String about = '/settings/about';
+  static const String appwriteTest = '/settings/appwrite-test';
 
   // Categories
   static const String categories = '/categories';

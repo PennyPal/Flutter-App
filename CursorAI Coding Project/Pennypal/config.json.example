@@ -1,0 +1,9 @@
+{
+  "APPWRITE_ENDPOINT": "https://cloud.appwrite.io/v1",
+  "APPWRITE_PROJECT_ID": "your_appwrite_project_id_here",
+  "APPWRITE_DATABASE_ID": "pennypal_db",
+  "APPWRITE_USER_COLLECTION_ID": "users",
+  "PERPLEXITY_API_KEY": "your_perplexity_api_key_here",
+  "PERPLEXITY_API_URL": "https://api.perplexity.ai"
+}
+
