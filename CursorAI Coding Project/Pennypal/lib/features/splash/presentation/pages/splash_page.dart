@@ -91,7 +91,7 @@ class _SplashPageState extends State<SplashPage>
                         'PENNY PAL',
                         style: Theme.of(context).textTheme.displayMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.onSurfaceDark,
+                          color: AppColors.onBackground,
                           letterSpacing: 2,
                         ),
                       ),
@@ -101,7 +101,7 @@ class _SplashPageState extends State<SplashPage>
                       Text(
                         'Your financial friend',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: AppColors.onSurfaceDark,
+                          color: AppColors.onBackground,
                           fontSize: 16,
                         ),
                       ),

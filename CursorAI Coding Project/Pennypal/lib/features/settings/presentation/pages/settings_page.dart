@@ -16,7 +16,7 @@ class SettingsPage extends StatelessWidget {
           onPressed: () => context.go('/home'),
           icon: const Icon(
             Icons.arrow_back,
-            color: AppColors.onSurfaceDark,
+            color: AppColors.onBackground,
           ),
         ),
       ),
@@ -27,7 +27,7 @@ class SettingsPage extends StatelessWidget {
             Icon(
               Icons.settings,
               size: 64,
-              color: AppColors.onSurfaceDark,
+              color: AppColors.onBackground,
             ),
             SizedBox(height: 16),
             Text(
@@ -35,7 +35,7 @@ class SettingsPage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: AppColors.onSurfaceDark,
+                color: AppColors.onBackground,
               ),
             ),
             SizedBox(height: 8),

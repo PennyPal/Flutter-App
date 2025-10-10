@@ -18,7 +18,7 @@ class GoalsPage extends StatelessWidget {
             },
             icon: const Icon(
               Icons.add,
-              color: AppColors.onSurfaceDark,
+              color: AppColors.onBackground,
             ),
           ),
         ],
@@ -30,7 +30,7 @@ class GoalsPage extends StatelessWidget {
             Icon(
               Icons.track_changes,
               size: 64,
-              color: AppColors.onSurfaceDark,
+              color: AppColors.onBackground,
             ),
             SizedBox(height: 16),
             Text(
@@ -38,7 +38,7 @@ class GoalsPage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: AppColors.onSurfaceDark,
+                color: AppColors.onBackground,
               ),
             ),
             SizedBox(height: 8),
