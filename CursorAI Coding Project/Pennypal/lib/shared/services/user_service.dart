@@ -12,6 +12,14 @@ class UserService {
   double? _monthlyIncome;
   Map<String, double> _budgetCategories = {};
   bool _onboardingCompleted = false;
+  
+  // Additional profile fields
+  String? _username;
+  int? _age;
+  String? _profileDescription;
+  String? _interests;
+  String? _profilePicture;
+  String? _profilePictureType; // 'unknown_user', 'finance_icon', 'uploaded_image'
 
   // Getters
   String get userName => _userName ?? 'User';
@@ -19,6 +27,14 @@ class UserService {
   double get monthlyIncome => _monthlyIncome ?? 0.0;
   Map<String, double> get budgetCategories => Map.from(_budgetCategories);
   bool get isOnboardingCompleted => _onboardingCompleted;
+  
+  // Additional profile getters
+  String get username => _username ?? '@${userName.toLowerCase().replaceAll(' ', '')}';
+  int get age => _age ?? 25;
+  String get profileDescription => _profileDescription ?? 'Financial enthusiast and budgeting expert!';
+  String get interests => _interests ?? 'Budgeting, Investing, Saving';
+  String get profilePicture => _profilePicture ?? 'unknown_user';
+  String get profilePictureType => _profilePictureType ?? 'unknown_user';
 
   // Check if user has completed setup
   bool get isUserSetupComplete => 
@@ -47,10 +63,22 @@ class UserService {
     String? name,
     String? email,
     double? income,
+    String? username,
+    int? age,
+    String? description,
+    String? interests,
+    String? profilePicture,
+    String? profilePictureType,
   }) {
     if (name != null) _userName = name;
     if (email != null) _userEmail = email;
     if (income != null) _monthlyIncome = income;
+    if (username != null) _username = username;
+    if (age != null) _age = age;
+    if (description != null) _profileDescription = description;
+    if (interests != null) _interests = interests;
+    if (profilePicture != null) _profilePicture = profilePicture;
+    if (profilePictureType != null) _profilePictureType = profilePictureType;
     
     if (kDebugMode) {
       print('Profile updated: $_userName');
@@ -77,6 +105,12 @@ class UserService {
     _monthlyIncome = null;
     _budgetCategories.clear();
     _onboardingCompleted = false;
+    _username = null;
+    _age = null;
+    _profileDescription = null;
+    _interests = null;
+    _profilePicture = null;
+    _profilePictureType = null;
   }
 
   // Get greeting message based on time of day

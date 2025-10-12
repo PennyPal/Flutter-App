@@ -41,12 +41,12 @@ class DashboardPage extends StatelessWidget {
                     children: [
                       IconButton(
                         onPressed: () {
-                          // TODO: Show notifications
+                          context.go(RouteNames.profile);
                         },
-                        icon: const Icon(Icons.notifications_outlined),
+                        icon: const Icon(Icons.person_outline),
                         style: IconButton.styleFrom(
-                          backgroundColor: AppColors.surface,
-                          foregroundColor: AppColors.onPrimary,
+                          backgroundColor: const Color(0xFF6B2C91), // Deep royal magenta
+                          foregroundColor: Colors.white,
                         ),
                       ),
                       const SizedBox(width: AppTheme.sm),
@@ -56,8 +56,8 @@ class DashboardPage extends StatelessWidget {
                         },
                         icon: const Icon(Icons.settings_outlined),
                         style: IconButton.styleFrom(
-                          backgroundColor: AppColors.surface,
-                          foregroundColor: AppColors.onPrimary,
+                          backgroundColor: const Color(0xFF6B2C91), // Deep royal magenta
+                          foregroundColor: Colors.white,
                         ),
                       ),
                     ],

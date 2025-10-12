@@ -18,6 +18,7 @@ import '../../features/learn/presentation/pages/learn_page.dart';
 import '../../features/chat/presentation/pages/chat_page.dart';
 import '../../features/quests/presentation/pages/quests_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
+import '../../features/profile/presentation/pages/edit_profile_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
 import '../../shared/widgets/layout/main_layout.dart';
 
@@ -139,6 +140,13 @@ class AppRouter {
               builder: (context, state) => const ProfilePage(),
             ),
           ],
+        ),
+
+        // Edit Profile (outside main layout)
+        GoRoute(
+          path: RouteNames.profileEdit,
+          name: 'profileEdit',
+          builder: (context, state) => const EditProfilePage(),
         ),
 
         // Add Transaction (outside main layout)

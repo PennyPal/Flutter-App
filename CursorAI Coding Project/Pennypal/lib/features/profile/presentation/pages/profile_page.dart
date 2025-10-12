@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../shared/services/user_service.dart';
+import '../../../../shared/services/gamification_service.dart';
+import '../../../../shared/services/profile_picture_service.dart';
 
-/// Enhanced profile page with user information
+/// Profile page matching the provided design
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -12,201 +16,212 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  // Get data from UserService
   final _userService = UserService();
+  final _gamificationService = GamificationService();
+  final _profilePictureService = ProfilePictureService();
   
-  // Local stats (would come from transaction/budget services in real app)
-  int _memberSince = 2024;
-  int _totalTransactions = 142;
-  double _totalSaved = 1250.75;
+  // Username derived from user service
+  String get _username => _userService.username;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize with sample data for demo
+    _gamificationService.initializeWithSampleData();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
     return Scaffold(
-      backgroundColor: AppColors.background,
-      body: CustomScrollView(
-        slivers: [
-          // Custom App Bar with gradient
-          SliverAppBar(
-            expandedHeight: 200,
-            floating: false,
-            pinned: true,
-            backgroundColor: AppColors.primary,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: AppColors.primaryGradient,
-                ),
-                child: SafeArea(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 40),
-                      // Profile Avatar
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(40),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          Icons.person,
-                          size: 40,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      const SizedBox(height: AppTheme.md),
-                      // User Name
-                      Text(
-                        _userService.userName,
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        'Member since $_memberSince',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: Colors.white.withOpacity(0.9),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+      backgroundColor: const Color(0xFFF8E8EB), // Light pink background
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Header section
+            _buildHeader(),
+            
+            // Profile picture and user info
+            _buildProfileSection(),
+            
+            // Dashboard section
+            _buildDashboardSection(),
+            
+            const Spacer(),
+            
+            // Reset User Data button
+            _buildResetButton(),
+            
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Back button
+          Container(
+            width: 40,
+            height: 40,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
             ),
-            actions: [
-              IconButton(
-                onPressed: () => _showEditProfileDialog(),
-                icon: const Icon(Icons.edit, color: Colors.white),
-              ),
-            ],
+            child: IconButton(
+              onPressed: () => context.go(RouteNames.home),
+              icon: const Icon(Icons.arrow_back, color: Colors.black),
+              padding: EdgeInsets.zero,
+            ),
           ),
           
-          // Profile Content
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(AppTheme.lg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Stats Cards
-                  _buildStatsSection(),
-                  const SizedBox(height: AppTheme.xl),
-                  
-                  // Profile Information
-                  _buildProfileInfo(),
-                  const SizedBox(height: AppTheme.xl),
-                  
-                  // Settings & Actions
-                  _buildActionsSection(),
-                ],
-              ),
-            ),
+          // Settings icon
+          IconButton(
+            onPressed: () => context.go(RouteNames.settings),
+            icon: const Icon(Icons.settings, color: Colors.black),
+            padding: EdgeInsets.zero,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildStatsSection() {
+  Widget _buildProfileSection() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Your Financial Journey',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: AppColors.onBackground,
+        // Profile picture
+        Container(
+          width: 120,
+          height: 120,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.grey.shade300, width: 1),
+          ),
+          child: Center(
+            child: _profilePictureService.getProfilePictureWidget(
+              type: _userService.profilePictureType,
+              value: _userService.profilePicture,
+              size: 60,
+            ),
           ),
         ),
-        const SizedBox(height: AppTheme.lg),
+        
+        const SizedBox(height: 16),
+        
+        // User name
+        Text(
+          _userService.userName,
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        
+        const SizedBox(height: 4),
+        
+        // Username
+        Text(
+          _username,
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.grey.shade600,
+          ),
+        ),
+        
+        const SizedBox(height: 20),
+        
+        // Action buttons
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              child: _buildStatCard(
-                'Transactions',
-                _totalTransactions.toString(),
-                Icons.receipt_long,
-                AppColors.primary,
-              ),
-            ),
-            const SizedBox(width: AppTheme.md),
-            Expanded(
-              child: _buildStatCard(
-                'Total Saved',
-                '\$${_totalSaved.toStringAsFixed(2)}',
-                Icons.savings,
-                AppColors.success,
+            // Edit Profile button
+            GestureDetector(
+              onTap: () => context.go(RouteNames.profileEdit),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.black, width: 1),
+                ),
+                child: const Text(
+                  'Edit Profile',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: AppTheme.md),
-        Row(
-          children: [
-            Expanded(
-              child:               _buildStatCard(
-                'Monthly Income',
-                '\$${_userService.monthlyIncome.toStringAsFixed(0)}',
-                Icons.trending_up,
-                AppColors.info,
-              ),
-            ),
-            const SizedBox(width: AppTheme.md),
-            Expanded(
-              child: _buildStatCard(
-                'Savings Rate',
-                '${_userService.monthlyIncome > 0 ? ((_totalSaved / _userService.monthlyIncome) * 100).toStringAsFixed(1) : '0.0'}%',
-                Icons.pie_chart,
-                AppColors.warning,
-              ),
-            ),
-          ],
-        ),
+        
+        const SizedBox(height: 30),
       ],
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
+  Widget _buildDashboardSection() {
     return Container(
-      padding: const EdgeInsets.all(AppTheme.lg),
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppTheme.radiusLg.x),
-        border: Border.all(color: AppColors.onSurface.withOpacity(0.1)),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Dashboard title
+          Text(
+            'DASHBOARD:',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey.shade700,
+            ),
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // Stats
+          _buildStatItem('Level Status: Level ${_gamificationService.currentLevel}'),
+          _buildStatItem('Active Days: ${_gamificationService.activeDays} Days'),
+          _buildStatItem('Quizzes: ${_gamificationService.quizzesCompleted}'),
+          _buildStatItem('Badges Earned: ${_gamificationService.badgesEarned}'),
+          
+          const SizedBox(height: 16),
+          
+          // Badges
           Row(
-            children: [
-              Icon(icon, color: color, size: 20),
-              const Spacer(),
-            ],
-          ),
-          const SizedBox(height: AppTheme.sm),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppColors.onBackground,
-            ),
-          ),
-          Text(
-            title,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppColors.onSurface,
+            children: List.generate(_gamificationService.badgesEarned, (index) => 
+              Container(
+                margin: const EdgeInsets.only(right: 8),
+                width: 40,
+                height: 40,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFFD700), // Gold color
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.emoji_events,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
             ),
           ),
         ],
@@ -214,227 +229,50 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildProfileInfo() {
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.lg),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppTheme.radiusLg.x),
-        border: Border.all(color: AppColors.onSurface.withOpacity(0.1)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Profile Information',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppColors.onBackground,
-            ),
-          ),
-          const SizedBox(height: AppTheme.lg),
-          _buildInfoRow('Name', _userService.userName, Icons.person),
-          _buildInfoRow('Email', _userService.userEmail, Icons.email),
-          _buildInfoRow('Monthly Income', '\$${_userService.monthlyIncome.toStringAsFixed(2)}', Icons.attach_money),
-          _buildInfoRow('Joined', 'January $_memberSince', Icons.calendar_today),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(String label, String value, IconData icon) {
+  Widget _buildStatItem(String text) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppTheme.md),
-      child: Row(
-        children: [
-          Icon(icon, color: AppColors.primary, size: 20),
-          const SizedBox(width: AppTheme.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.onSurface,
-                  ),
-                ),
-                Text(
-                  value,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.onBackground,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionsSection() {
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.lg),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppTheme.radiusLg.x),
-        border: Border.all(color: AppColors.onSurface.withOpacity(0.1)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Settings & Actions',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppColors.onBackground,
-            ),
-          ),
-          const SizedBox(height: AppTheme.lg),
-          _buildActionTile('Edit Profile', Icons.edit, () => _showEditProfileDialog()),
-          _buildActionTile('Export Data', Icons.download, () => _exportData()),
-          _buildActionTile('Notifications', Icons.notifications, () => _showNotificationSettings()),
-          _buildActionTile('Privacy & Security', Icons.security, () => _showPrivacySettings()),
-          _buildActionTile('Help & Support', Icons.help, () => _showHelpSupport()),
-          _buildActionTile('Sign Out', Icons.logout, () => _signOut(), isDestructive: true),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionTile(String title, IconData icon, VoidCallback onTap, {bool isDestructive = false}) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Icon(
-        icon,
-        color: isDestructive ? AppColors.error : AppColors.primary,
-      ),
-      title: Text(
-        title,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          color: isDestructive ? AppColors.error : AppColors.onBackground,
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          color: Color(0xFFC74B50), // Dark red/magenta color
         ),
       ),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-      onTap: onTap,
     );
   }
 
-  void _showEditProfileDialog() {
-    final nameController = TextEditingController(text: _userService.userName);
-    final emailController = TextEditingController(text: _userService.userEmail);
-    final incomeController = TextEditingController(text: _userService.monthlyIncome.toString());
+  Widget _buildResetButton() {
+    return GestureDetector(
+      onTap: _showResetConfirmation,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF44336), // Red background
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Text(
+          'Reset User Data',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
 
+  void _showResetConfirmation() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Edit Profile'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Name',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: AppTheme.md),
-              TextField(
-                controller: emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: AppTheme.md),
-              TextField(
-                controller: incomeController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Monthly Income',
-                  prefixText: '\$ ',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              // Update user service
-              _userService.updateProfile(
-                name: nameController.text.trim(),
-                email: emailController.text.trim(),
-                income: double.tryParse(incomeController.text) ?? _userService.monthlyIncome,
-              );
-              
-              setState(() {}); // Refresh UI
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Profile updated successfully!'),
-                  backgroundColor: AppColors.success,
-                ),
-              );
-            },
-            child: const Text('Save'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _exportData() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Data export feature coming soon!'),
-        backgroundColor: AppColors.info,
-      ),
-    );
-  }
-
-  void _showNotificationSettings() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Notification settings coming soon!'),
-        backgroundColor: AppColors.info,
-      ),
-    );
-  }
-
-  void _showPrivacySettings() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Privacy settings coming soon!'),
-        backgroundColor: AppColors.info,
-      ),
-    );
-  }
-
-  void _showHelpSupport() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Help & support coming soon!'),
-        backgroundColor: AppColors.info,
-      ),
-    );
-  }
-
-  void _signOut() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Sign Out'),
-        content: const Text('Are you sure you want to sign out?'),
+        title: const Text('Reset User Data'),
+        content: const Text('Are you sure you want to reset all your progress? This action cannot be undone.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -443,18 +281,25 @@ class _ProfilePageState extends State<ProfilePage> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Signed out successfully!'),
-                  backgroundColor: AppColors.success,
-                ),
-              );
-              // In real app, navigate to login screen
+              _resetUserData();
             },
-            child: const Text('Sign Out'),
-            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Reset'),
           ),
         ],
+      ),
+    );
+  }
+
+  void _resetUserData() {
+    _gamificationService.resetData();
+    _userService.clearUserData();
+    setState(() {});
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('User data has been reset'),
+        backgroundColor: Colors.green,
       ),
     );
   }

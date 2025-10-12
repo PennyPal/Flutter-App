@@ -1,0 +1,394 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/router/route_names.dart';
+import '../../../../core/theme/color_scheme.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../shared/services/user_service.dart';
+import '../../../../shared/services/profile_picture_service.dart';
+import '../widgets/profile_picture_selection_dialog.dart';
+
+/// Edit profile page for updating user information
+class EditProfilePage extends StatefulWidget {
+  const EditProfilePage({super.key});
+
+  @override
+  State<EditProfilePage> createState() => _EditProfilePageState();
+}
+
+class _EditProfilePageState extends State<EditProfilePage> {
+  final _userService = UserService();
+  final _profilePictureService = ProfilePictureService();
+  final _formKey = GlobalKey<FormState>();
+  
+  // Controllers for form fields
+  late TextEditingController _nameController;
+  late TextEditingController _usernameController;
+  late TextEditingController _ageController;
+  late TextEditingController _emailController;
+  late TextEditingController _descriptionController;
+  late TextEditingController _interestsController;
+  
+  // Profile data (temporary changes that aren't saved yet)
+  String _tempProfilePicture = '';
+  String _tempProfilePictureType = '';
+  bool _hasUnsavedChanges = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeControllers();
+  }
+
+  void _initializeControllers() {
+    _nameController = TextEditingController(text: _userService.userName);
+    _usernameController = TextEditingController(text: _userService.username);
+    _ageController = TextEditingController(text: _userService.age.toString());
+    _emailController = TextEditingController(text: _userService.userEmail);
+    _descriptionController = TextEditingController(text: _userService.profileDescription);
+    _interestsController = TextEditingController(text: _userService.interests);
+    
+    // Initialize temporary profile picture data
+    _tempProfilePicture = _userService.profilePicture;
+    _tempProfilePictureType = _userService.profilePictureType;
+    
+    // Add listeners to detect changes
+    _nameController.addListener(_onFieldChanged);
+    _usernameController.addListener(_onFieldChanged);
+    _ageController.addListener(_onFieldChanged);
+    _emailController.addListener(_onFieldChanged);
+    _descriptionController.addListener(_onFieldChanged);
+    _interestsController.addListener(_onFieldChanged);
+  }
+
+  @override
+  void dispose() {
+    _nameController.removeListener(_onFieldChanged);
+    _usernameController.removeListener(_onFieldChanged);
+    _ageController.removeListener(_onFieldChanged);
+    _emailController.removeListener(_onFieldChanged);
+    _descriptionController.removeListener(_onFieldChanged);
+    _interestsController.removeListener(_onFieldChanged);
+    
+    _nameController.dispose();
+    _usernameController.dispose();
+    _ageController.dispose();
+    _emailController.dispose();
+    _descriptionController.dispose();
+    _interestsController.dispose();
+    super.dispose();
+  }
+
+  void _onFieldChanged() {
+    if (!_hasUnsavedChanges) {
+      setState(() {
+        _hasUnsavedChanges = true;
+      });
+    }
+  }
+
+  bool _hasFormChanges() {
+    return _nameController.text.trim() != _userService.userName ||
+           _usernameController.text.trim() != _userService.username ||
+           _ageController.text.trim() != _userService.age.toString() ||
+           _emailController.text.trim() != _userService.userEmail ||
+           _descriptionController.text.trim() != _userService.profileDescription ||
+           _interestsController.text.trim() != _userService.interests ||
+           _tempProfilePicture != _userService.profilePicture ||
+           _tempProfilePictureType != _userService.profilePictureType;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8E8EB), // Light pink background
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF6B2C91), // Deep royal magenta
+        foregroundColor: Colors.white,
+        title: const Text('Edit Profile'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => _handleBackNavigation(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: _saveProfile,
+            child: const Text(
+              'Save',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Profile Picture Section
+              _buildProfilePictureSection(),
+              
+              const SizedBox(height: 24),
+              
+              // Name Field
+              _buildTextField(
+                controller: _nameController,
+                label: 'Name',
+                icon: Icons.person,
+                validator: (value) => value?.isEmpty == true ? 'Name is required' : null,
+              ),
+              
+              const SizedBox(height: 16),
+              
+              // Username Field
+              _buildTextField(
+                controller: _usernameController,
+                label: 'Username',
+                icon: Icons.alternate_email,
+                validator: (value) => value?.isEmpty == true ? 'Username is required' : null,
+              ),
+              
+              const SizedBox(height: 16),
+              
+              // Age Field
+              _buildTextField(
+                controller: _ageController,
+                label: 'Age',
+                icon: Icons.cake,
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value?.isEmpty == true) return 'Age is required';
+                  final age = int.tryParse(value!);
+                  if (age == null || age < 13 || age > 120) {
+                    return 'Please enter a valid age (13-120)';
+                  }
+                  return null;
+                },
+              ),
+              
+              const SizedBox(height: 16),
+              
+              // Email Field
+              _buildTextField(
+                controller: _emailController,
+                label: 'Email',
+                icon: Icons.email,
+                keyboardType: TextInputType.emailAddress,
+                validator: (value) {
+                  if (value?.isEmpty == true) return 'Email is required';
+                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value!)) {
+                    return 'Please enter a valid email';
+                  }
+                  return null;
+                },
+              ),
+              
+              const SizedBox(height: 16),
+              
+              // Profile Description Field
+              _buildTextField(
+                controller: _descriptionController,
+                label: 'Profile Description',
+                icon: Icons.description,
+                maxLines: 3,
+                validator: (value) => value?.isEmpty == true ? 'Description is required' : null,
+              ),
+              
+              const SizedBox(height: 16),
+              
+              // Interests Field
+              _buildTextField(
+                controller: _interestsController,
+                label: 'Interests (comma separated)',
+                icon: Icons.favorite,
+                validator: (value) => value?.isEmpty == true ? 'Interests are required' : null,
+              ),
+              
+              const SizedBox(height: 32),
+              
+              // Save Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _saveProfile,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6B2C91), // Deep royal magenta
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Save Changes',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfilePictureSection() {
+    return Center(
+      child: Column(
+        children: [
+          // Profile Picture
+          Container(
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.grey.shade300, width: 2),
+            ),
+          child: Center(
+            child: _profilePictureService.getProfilePictureWidget(
+              type: _tempProfilePictureType,
+              value: _tempProfilePicture,
+              size: 60,
+            ),
+          ),
+          ),
+          
+          const SizedBox(height: 12),
+          
+          // Change Picture Button
+          TextButton.icon(
+            onPressed: _changeProfilePicture,
+            icon: const Icon(Icons.camera_alt, color: Color(0xFF6B2C91)),
+            label: const Text(
+              'Change Picture',
+              style: TextStyle(color: Color(0xFF6B2C91), fontWeight: FontWeight.w500),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    TextInputType? keyboardType,
+    int maxLines = 1,
+    String? Function(String?)? validator,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TextFormField(
+        controller: controller,
+        keyboardType: keyboardType,
+        maxLines: maxLines,
+        validator: validator,
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(icon, color: const Color(0xFF6B2C91)),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        ),
+      ),
+    );
+  }
+
+  void _changeProfilePicture() {
+    showDialog(
+      context: context,
+      builder: (context) => ProfilePictureSelectionDialog(
+        onPictureSelected: (pictureValue, pictureType) {
+          setState(() {
+            _tempProfilePicture = pictureValue;
+            _tempProfilePictureType = pictureType;
+            _hasUnsavedChanges = true;
+          });
+        },
+      ),
+    );
+  }
+
+  void _handleBackNavigation() {
+    if (_hasFormChanges()) {
+      _showUnsavedChangesDialog();
+    } else {
+      context.go(RouteNames.profile);
+    }
+  }
+
+  void _showUnsavedChangesDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Unsaved Changes'),
+        content: const Text('You have unsaved changes. Do you want to save them before leaving?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              context.go(RouteNames.profile);
+            },
+            child: const Text('Discard'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _saveProfile();
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _saveProfile() {
+    if (_formKey.currentState?.validate() == true) {
+      // Update user service with new data
+      _userService.updateProfile(
+        name: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        username: _usernameController.text.trim(),
+        age: int.tryParse(_ageController.text.trim()),
+        description: _descriptionController.text.trim(),
+        interests: _interestsController.text.trim(),
+        profilePicture: _tempProfilePicture,
+        profilePictureType: _tempProfilePictureType,
+      );
+      
+      // Reset unsaved changes flag
+      setState(() {
+        _hasUnsavedChanges = false;
+      });
+      
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Profile updated successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      
+      // Navigate back to profile page
+      context.go(RouteNames.profile);
+    }
+  }
+}
