@@ -20,6 +20,11 @@ import '../../features/quests/presentation/pages/quests_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/profile/presentation/pages/edit_profile_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
+import '../../features/settings/presentation/pages/theme_settings_page.dart';
+import '../../features/settings/presentation/pages/visibility_settings_page.dart';
+import '../../features/settings/presentation/pages/location_settings_page.dart';
+import '../../features/settings/presentation/pages/notification_settings_page.dart';
+import '../../features/settings/presentation/pages/advanced_settings_page.dart';
 import '../../shared/widgets/layout/main_layout.dart';
 
 /// Provider for the app router
@@ -168,6 +173,33 @@ class AppRouter {
           path: RouteNames.settings,
           name: 'settings',
           builder: (context, state) => const SettingsPage(),
+        ),
+
+        // Individual Settings Pages
+        GoRoute(
+          path: RouteNames.themeSettings,
+          name: 'themeSettings',
+          builder: (context, state) => const ThemeSettingsPage(),
+        ),
+        GoRoute(
+          path: RouteNames.visibilitySettings,
+          name: 'visibilitySettings',
+          builder: (context, state) => const VisibilitySettingsPage(),
+        ),
+        GoRoute(
+          path: RouteNames.locationSettings,
+          name: 'locationSettings',
+          builder: (context, state) => const LocationSettingsPage(),
+        ),
+        GoRoute(
+          path: RouteNames.notificationSettings,
+          name: 'notificationSettings',
+          builder: (context, state) => const NotificationSettingsPage(),
+        ),
+        GoRoute(
+          path: RouteNames.advancedSettings,
+          name: 'advancedSettings',
+          builder: (context, state) => const AdvancedSettingsPage(),
         ),
       ],
       

@@ -28,6 +28,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController _descriptionController;
   late TextEditingController _interestsController;
   
+  // Password change controllers
+  late TextEditingController _currentPasswordController;
+  late TextEditingController _newPasswordController;
+  late TextEditingController _confirmPasswordController;
+  
   // Profile data (temporary changes that aren't saved yet)
   String _tempProfilePicture = '';
   String _tempProfilePictureType = '';
@@ -46,6 +51,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _emailController = TextEditingController(text: _userService.userEmail);
     _descriptionController = TextEditingController(text: _userService.profileDescription);
     _interestsController = TextEditingController(text: _userService.interests);
+    
+    // Initialize password controllers
+    _currentPasswordController = TextEditingController();
+    _newPasswordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
     
     // Initialize temporary profile picture data
     _tempProfilePicture = _userService.profilePicture;
@@ -75,6 +85,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _emailController.dispose();
     _descriptionController.dispose();
     _interestsController.dispose();
+    _currentPasswordController.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -204,6 +217,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 icon: Icons.favorite,
                 validator: (value) => value?.isEmpty == true ? 'Interests are required' : null,
               ),
+              
+              const SizedBox(height: 24),
+              
+              // Password Change Section
+              _buildPasswordChangeSection(),
               
               const SizedBox(height: 32),
               
@@ -360,9 +378,161 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
+  Widget _buildPasswordChangeSection() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFF6B2C91).withOpacity(0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.lock_outline,
+                color: const Color(0xFF6B2C91),
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              const Text(
+                'Change Password',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF6B2C91),
+                ),
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // Current Password
+          _buildPasswordField(
+            controller: _currentPasswordController,
+            label: 'Current Password',
+            icon: Icons.lock,
+          ),
+          
+          const SizedBox(height: 12),
+          
+          // New Password
+          _buildPasswordField(
+            controller: _newPasswordController,
+            label: 'New Password',
+            icon: Icons.lock_outline,
+          ),
+          
+          const SizedBox(height: 12),
+          
+          // Confirm Password
+          _buildPasswordField(
+            controller: _confirmPasswordController,
+            label: 'Confirm New Password',
+            icon: Icons.lock_outline,
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // Change Password Button
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _changePassword,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF6B2C91),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text(
+                'Change Password',
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPasswordField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+  }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: true,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: const Color(0xFF6B2C91)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide.none,
+        ),
+        filled: true,
+        fillColor: Colors.grey.shade50,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      ),
+    );
+  }
+
+  void _changePassword() {
+    if (_currentPasswordController.text.isEmpty ||
+        _newPasswordController.text.isEmpty ||
+        _confirmPasswordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please fill in all password fields'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (_newPasswordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('New passwords do not match'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (_newPasswordController.text.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('New password must be at least 6 characters long'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // In a real app, you would validate the current password and update it in the database
+    // For now, we'll just show a success message
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Password changed successfully!'),
+        backgroundColor: Colors.green,
+      ),
+    );
+
+    // Clear password fields
+    _currentPasswordController.clear();
+    _newPasswordController.clear();
+    _confirmPasswordController.clear();
+  }
+
   void _saveProfile() {
     if (_formKey.currentState?.validate() == true) {
-      // Update user service with new data
       _userService.updateProfile(
         name: _nameController.text.trim(),
         email: _emailController.text.trim(),

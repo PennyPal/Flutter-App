@@ -1,52 +1,212 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/color_scheme.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../shared/services/user_service.dart';
 
-/// Settings page
+/// Settings page matching the provided design
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: const Color(0xFFF8E8EB), // Light pink background
       appBar: AppBar(
+        backgroundColor: const Color(0xFF6B2C91), // Deep royal magenta
+        foregroundColor: Colors.white,
         title: const Text('Settings'),
         leading: IconButton(
-          onPressed: () => context.go('/home'),
-          icon: const Icon(
-            Icons.arrow_back,
-            color: AppColors.onBackground,
-          ),
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.go(RouteNames.home),
         ),
       ),
-      body: const Center(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.settings,
-              size: 64,
-              color: AppColors.onBackground,
+            // Account Setting
+            _buildSettingsCard(
+              icon: Icons.person_outline,
+              title: 'Account Setting',
+              description: 'Manage your profile details, email, and password',
+              onTap: () => context.go(RouteNames.profileEdit),
             ),
-            SizedBox(height: 16),
-            Text(
-              'Settings Page',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: AppColors.onBackground,
-              ),
+            
+            const SizedBox(height: 12),
+            
+            // Theme
+            _buildSettingsCard(
+              icon: Icons.palette_outlined,
+              title: 'Theme',
+              description: 'Switch between light, dark, or colored themes',
+              onTap: () => context.go(RouteNames.themeSettings),
             ),
-            SizedBox(height: 8),
-            Text(
-              'Coming soon...',
-              style: TextStyle(
-                color: AppColors.onSecondary,
-              ),
+            
+            const SizedBox(height: 12),
+            
+            // Visibility
+            _buildSettingsCard(
+              icon: Icons.visibility_outlined,
+              title: 'Visibility',
+              description: 'Control who can view your profile and activity',
+              onTap: () => context.go(RouteNames.visibilitySettings),
+            ),
+            
+            const SizedBox(height: 12),
+            
+            // Location Access
+            _buildSettingsCard(
+              icon: Icons.location_on_outlined,
+              title: 'Location Access',
+              description: 'Allow or restrict location-based content & features',
+              onTap: () => context.go(RouteNames.locationSettings),
+            ),
+            
+            const SizedBox(height: 12),
+            
+            // Notifications
+            _buildSettingsCard(
+              icon: Icons.notifications_outlined,
+              title: 'Notifications',
+              description: 'Choose what alerts you receive and how often',
+              onTap: () => context.go(RouteNames.notificationSettings),
+            ),
+            
+            const SizedBox(height: 12),
+            
+            // Advanced
+            _buildSettingsCard(
+              icon: Icons.settings_outlined,
+              title: 'Advanced',
+              description: 'Deactivate or permanently delete your account',
+              onTap: () => context.go(RouteNames.advancedSettings),
+            ),
+            
+            const SizedBox(height: 12),
+            
+            // Log-out
+            _buildSettingsCard(
+              icon: Icons.logout,
+              title: 'Log-out',
+              description: 'Sign out of your account',
+              onTap: () => _showLogoutDialog(context),
+            ),
+            
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSettingsCard({
+    required IconData icon,
+    required String title,
+    required String description,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
+        child: Row(
+          children: [
+            // Icon
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: const Color(0xFF6B2C91).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon,
+                color: const Color(0xFF6B2C91),
+                size: 20,
+              ),
+            ),
+            
+            const SizedBox(width: 16),
+            
+            // Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            
+            // Arrow
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: Colors.grey.shade400,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Log Out'),
+        content: const Text('Are you sure you want to sign out of your account?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              // Clear user data and navigate to login
+              UserService().clearUserData();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Successfully logged out'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              context.go(RouteNames.login);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Log Out'),
+          ),
+        ],
       ),
     );
   }

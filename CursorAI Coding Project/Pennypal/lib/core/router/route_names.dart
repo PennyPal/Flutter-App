@@ -49,8 +49,12 @@ class RouteNames {
   static const String profileEdit = '/profile/edit';
   static const String settings = '/settings';
   static const String accountSettings = '/settings/account';
-  static const String privacySettings = '/settings/privacy';
+  static const String themeSettings = '/settings/theme';
+  static const String visibilitySettings = '/settings/visibility';
+  static const String locationSettings = '/settings/location';
   static const String notificationSettings = '/settings/notifications';
+  static const String advancedSettings = '/settings/advanced';
+  static const String privacySettings = '/settings/privacy';
   static const String about = '/settings/about';
   static const String appwriteTest = '/settings/appwrite-test';
 
