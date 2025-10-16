@@ -35,12 +35,12 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    return Scaffold(
-      backgroundColor: AppColors.background,
+
+      return Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Financial Education'),
-        backgroundColor: AppColors.background,
+        backgroundColor: theme.colorScheme.background,
         elevation: 0,
         actions: [
           IconButton(
@@ -50,9 +50,9 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin {
         ],
         bottom: TabBar(
           controller: _tabController,
-          labelColor: AppColors.primary,
-          unselectedLabelColor: AppColors.onSurface,
-          indicatorColor: AppColors.primary,
+          labelColor: theme.colorScheme.primary,
+            unselectedLabelColor: theme.colorScheme.onSurface,
+            indicatorColor: theme.colorScheme.primary,
           tabs: const [
             Tab(text: 'Featured'),
             Tab(text: 'Courses'),
@@ -113,19 +113,19 @@ class _FeaturedTab extends StatelessWidget {
         children: [
           // Welcome Section
           _WelcomeSection(),
-          
-          const SizedBox(height: AppTheme.xl),
-          
+
+          SizedBox(height: AppTheme.lg),
+
           // Featured Course
           _FeaturedCourseCard(),
-          
-          const SizedBox(height: AppTheme.xl),
-          
+
+          SizedBox(height: AppTheme.xl),
+
           // Quick Actions
           _QuickActionsGrid(),
-          
-          const SizedBox(height: AppTheme.xl),
-          
+
+          SizedBox(height: AppTheme.xl),
+
           // Today's Tip
           _TodaysTipCard(),
         ],
@@ -138,11 +138,10 @@ class _WelcomeSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
     return Container(
       padding: const EdgeInsets.all(AppTheme.lg),
       decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
+  gradient: LinearGradient(colors: [theme.colorScheme.primary, theme.colorScheme.primary.withAlpha((0.85 * 255).round())]),
         borderRadius: BorderRadius.circular(AppTheme.radiusLg.x),
       ),
       child: Column(
@@ -150,9 +149,9 @@ class _WelcomeSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(
+                    const Icon(
                 Icons.lightbulb,
-                color: AppColors.onPrimary,
+                color: Colors.white,
                 size: 32,
               ),
               const SizedBox(width: AppTheme.md),
@@ -164,13 +163,13 @@ class _WelcomeSection extends StatelessWidget {
                       'Continue Learning',
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.onPrimary,
+                        color: theme.colorScheme.onPrimary,
                       ),
                     ),
                     Text(
                       'Build your financial knowledge step by step',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: AppColors.onPrimary.withOpacity(0.9),
+                        color: theme.colorScheme.onPrimary.withAlpha((0.9 * 255).round()),
                       ),
                     ),
                   ],
@@ -219,14 +218,14 @@ class _StatCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(AppTheme.md),
         decoration: BoxDecoration(
-          color: AppColors.onPrimary.withOpacity(0.2),
+          color: theme.colorScheme.onPrimary.withAlpha((0.2 * 255).round()),
           borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
         ),
         child: Column(
           children: [
             Icon(
               icon,
-              color: AppColors.onPrimary,
+              color: theme.colorScheme.onPrimary,
               size: 24,
             ),
             const SizedBox(height: AppTheme.xs),
@@ -234,13 +233,13 @@ class _StatCard extends StatelessWidget {
               value,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.onPrimary,
+                color: theme.colorScheme.onPrimary,
               ),
             ),
             Text(
               label,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: AppColors.onPrimary.withOpacity(0.8),
+                color: theme.colorScheme.onPrimary.withAlpha((0.8 * 255).round()),
               ),
               textAlign: TextAlign.center,
             ),
@@ -269,11 +268,11 @@ class _FeaturedCourseCard extends StatelessWidget {
       child: Container(
       padding: const EdgeInsets.all(AppTheme.lg),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(AppTheme.radiusLg.x),
         boxShadow: [
           BoxShadow(
-            color: AppColors.onSurface.withOpacity(0.1),
+            color: theme.colorScheme.onSurface.withAlpha((0.1 * 255).round()),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -287,7 +286,7 @@ class _FeaturedCourseCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(AppTheme.sm),
                 decoration: BoxDecoration(
-                  color: AppColors.success.withOpacity(0.1),
+                  color: AppColors.success.withAlpha((0.1 * 255).round()),
                   borderRadius: BorderRadius.circular(AppTheme.radiusSm.x),
                 ),
                 child: const Icon(
@@ -312,7 +311,7 @@ class _FeaturedCourseCard extends StatelessWidget {
                       'Smart Investing 101',
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.onBackground,
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
                   ],
@@ -324,7 +323,7 @@ class _FeaturedCourseCard extends StatelessWidget {
                   vertical: AppTheme.xs,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.warning.withOpacity(0.1),
+                  color: AppColors.warning.withAlpha((0.1 * 255).round()),
                   borderRadius: BorderRadius.circular(AppTheme.radiusSm.x),
                 ),
                 child: Text(
@@ -341,7 +340,7 @@ class _FeaturedCourseCard extends StatelessWidget {
           Text(
             'Learn how to build wealth through smart investment strategies. Perfect for beginners who want to start investing.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: AppColors.onSurface,
+              color: theme.colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: AppTheme.lg),
@@ -353,8 +352,8 @@ class _FeaturedCourseCard extends StatelessWidget {
                     // TODO: Start course
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.onPrimary,
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: theme.colorScheme.onPrimary,
                     padding: const EdgeInsets.symmetric(vertical: AppTheme.md),
                   ),
                   child: const Text('Start Course'),
@@ -392,6 +391,7 @@ class _FeaturedCourseCard extends StatelessWidget {
 class _QuickActionsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final actions = [
       {
         'title': 'Budget Calculator',
@@ -425,9 +425,9 @@ class _QuickActionsGrid extends StatelessWidget {
         Text(
           'Financial Tools',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: AppColors.onBackground,
-          ),
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.onSurface,
+            ),
         ),
         const SizedBox(height: AppTheme.lg),
         GridView.builder(
@@ -482,12 +482,12 @@ class _QuickActionCard extends StatelessWidget {
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
           border: Border.all(
-            color: color.withOpacity(0.2),
+            color: color.withAlpha((0.2 * 255).round()),
             width: 1,
           ),
           boxShadow: [
-            BoxShadow(
-              color: AppColors.onSurface.withOpacity(0.1),
+              BoxShadow(
+                color: theme.colorScheme.onSurface.withAlpha((0.1 * 255).round()),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -499,7 +499,7 @@ class _QuickActionCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(AppTheme.md),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withAlpha((0.1 * 255).round()),
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
               ),
               child: Icon(
@@ -513,7 +513,7 @@ class _QuickActionCard extends StatelessWidget {
               title,
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: AppColors.onBackground,
+                color: theme.colorScheme.onSurface,
               ),
               textAlign: TextAlign.center,
             ),
@@ -521,7 +521,7 @@ class _QuickActionCard extends StatelessWidget {
             Text(
               description,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: AppColors.onSurface,
+                color: theme.colorScheme.onSurface,
               ),
               textAlign: TextAlign.center,
               maxLines: 2,
@@ -542,10 +542,10 @@ class _TodaysTipCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppTheme.lg),
       decoration: BoxDecoration(
-        color: AppColors.info.withOpacity(0.1),
+          color: AppColors.info.withAlpha((0.1 * 255).round()),
         borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
         border: Border.all(
-          color: AppColors.info.withOpacity(0.3),
+          color: AppColors.info.withAlpha((0.3 * 255).round()),
           width: 1,
         ),
       ),
@@ -563,9 +563,9 @@ class _TodaysTipCard extends StatelessWidget {
               Text(
                 'Today\'s Financial Tip',
                 style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.info,
-                ),
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.info,
+                    ),
               ),
             ],
           ),
@@ -573,7 +573,7 @@ class _TodaysTipCard extends StatelessWidget {
           Text(
             'The 50/30/20 rule: Allocate 50% of your income to needs, 30% to wants, and 20% to savings and debt repayment.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: AppColors.onBackground,
+              color: theme.colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: AppTheme.md),
@@ -669,11 +669,11 @@ class _CourseCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: AppTheme.lg),
       padding: const EdgeInsets.all(AppTheme.lg),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
         boxShadow: [
           BoxShadow(
-            color: AppColors.onSurface.withOpacity(0.1),
+            color: theme.colorScheme.onSurface.withAlpha((0.1 * 255).round()),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -687,7 +687,7 @@ class _CourseCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(AppTheme.sm),
                 decoration: BoxDecoration(
-                  color: (course['color'] as Color).withOpacity(0.1),
+                  color: (course['color'] as Color).withAlpha((0.1 * 255).round()),
                   borderRadius: BorderRadius.circular(AppTheme.radiusSm.x),
                 ),
                 child: Icon(
@@ -704,14 +704,14 @@ class _CourseCard extends StatelessWidget {
                     Text(
                       course['title'] as String,
                       style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.onBackground,
-                      ),
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.onSurface,
+                        ),
                     ),
                     Text(
                       course['description'] as String,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppColors.onSurface,
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
                   ],
@@ -744,9 +744,9 @@ class _CourseCard extends StatelessWidget {
               Text(
                 '${course['rating']} ⭐',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: AppColors.warning,
-                  fontWeight: FontWeight.w600,
-                ),
+                        color: AppColors.warning,
+                        fontWeight: FontWeight.w600,
+                      ),
               ),
               const Spacer(),
               ElevatedButton(
@@ -799,6 +799,7 @@ class _CourseInfo extends StatelessWidget {
 class _ToolsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppTheme.lg),
       child: Column(
@@ -808,7 +809,7 @@ class _ToolsTab extends StatelessWidget {
             'Financial Calculators & Tools',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
-              color: AppColors.onBackground,
+              color: theme.colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: AppTheme.lg),
@@ -824,6 +825,7 @@ class _ToolsTab extends StatelessWidget {
 class _AdvancedToolsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final tools = [
       {
         'title': 'Compound Interest Calculator',
@@ -858,7 +860,7 @@ class _AdvancedToolsSection extends StatelessWidget {
           'Advanced Tools',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
-            color: AppColors.onBackground,
+            color: theme.colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: AppTheme.lg),
@@ -883,7 +885,7 @@ class _ToolTile extends StatelessWidget {
         leading: Container(
           padding: const EdgeInsets.all(AppTheme.sm),
           decoration: BoxDecoration(
-            color: (tool['color'] as Color).withOpacity(0.1),
+            color: (tool['color'] as Color).withAlpha((0.1 * 255).round()),
             borderRadius: BorderRadius.circular(AppTheme.radiusSm.x),
           ),
           child: Icon(
@@ -896,19 +898,19 @@ class _ToolTile extends StatelessWidget {
           tool['title'] as String,
           style: theme.textTheme.bodyMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: AppColors.onBackground,
+            color: theme.colorScheme.onSurface,
           ),
         ),
         subtitle: Text(
           tool['description'] as String,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: AppColors.onSurface,
+            color: theme.colorScheme.onSurface,
           ),
         ),
-        trailing: const Icon(
+        trailing: Icon(
           Icons.arrow_forward_ios,
           size: 16,
-          color: AppColors.onSurface,
+          color: theme.colorScheme.onSurface,
         ),
         onTap: () => LearnPageMethods.openTool(context, tool['title'] as String),
       ),
@@ -943,7 +945,7 @@ class _ProgressOverview extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppTheme.lg),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
       ),
       child: Column(
@@ -953,7 +955,7 @@ class _ProgressOverview extends StatelessWidget {
             'Your Learning Progress',
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
-              color: AppColors.onBackground,
+              color: theme.colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: AppTheme.lg),
@@ -1004,7 +1006,7 @@ class _ProgressCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppTheme.md),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+  color: color.withAlpha((0.1 * 255).round()),
         borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
       ),
       child: Column(
@@ -1013,7 +1015,7 @@ class _ProgressCard extends StatelessWidget {
           Text(
             title,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: AppColors.onSurface,
+              color: theme.colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: AppTheme.xs),
@@ -1027,7 +1029,7 @@ class _ProgressCard extends StatelessWidget {
           const SizedBox(height: AppTheme.sm),
           LinearProgressIndicator(
             value: percentage,
-            backgroundColor: AppColors.surfaceVariant,
+            backgroundColor: theme.colorScheme.surfaceVariant,
             valueColor: AlwaysStoppedAnimation<Color>(color),
           ),
         ],
@@ -1039,6 +1041,7 @@ class _ProgressCard extends StatelessWidget {
 class _CompletedCoursesSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final completedCourses = [
       {'title': 'Personal Budgeting Mastery', 'completedAt': '2 days ago', 'rating': 4.8},
       {'title': 'Emergency Fund Planning', 'completedAt': '1 week ago', 'rating': 4.9},
@@ -1052,7 +1055,7 @@ class _CompletedCoursesSection extends StatelessWidget {
           'Completed Courses',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            color: AppColors.onBackground,
+            color: theme.colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: AppTheme.lg),
@@ -1075,10 +1078,10 @@ class _CompletedCourseCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: AppTheme.md),
       padding: const EdgeInsets.all(AppTheme.lg),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
         border: Border.all(
-          color: AppColors.success.withOpacity(0.3),
+          color: AppColors.success.withAlpha((0.3 * 255).round()),
           width: 1,
         ),
       ),
@@ -1087,7 +1090,7 @@ class _CompletedCourseCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(AppTheme.sm),
             decoration: BoxDecoration(
-              color: AppColors.success.withOpacity(0.1),
+              color: AppColors.success.withAlpha((0.1 * 255).round()),
               borderRadius: BorderRadius.circular(AppTheme.radiusSm.x),
             ),
             child: const Icon(
@@ -1105,13 +1108,13 @@ class _CompletedCourseCard extends StatelessWidget {
                   course['title'] as String,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: AppColors.onBackground,
+                    color: theme.colorScheme.onSurface,
                   ),
                 ),
                 Text(
                   'Completed ${course['completedAt']}',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppColors.onSurface,
+                    color: theme.colorScheme.onSurface,
                   ),
                 ),
               ],
@@ -1133,6 +1136,7 @@ class _CompletedCourseCard extends StatelessWidget {
 class _AchievementsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final achievements = [
       {'title': 'First Course Complete', 'description': 'Completed your first course', 'icon': Icons.school, 'earned': true},
       {'title': 'Study Streak', 'description': 'Studied 5 days in a row', 'icon': Icons.local_fire_department, 'earned': true},
@@ -1147,7 +1151,7 @@ class _AchievementsSection extends StatelessWidget {
           'Achievements',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            color: AppColors.onBackground,
+            color: theme.colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: AppTheme.lg),
@@ -1184,10 +1188,10 @@ class _AchievementCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppTheme.lg),
       decoration: BoxDecoration(
-        color: isEarned ? AppColors.warning.withOpacity(0.1) : AppColors.surface,
+  color: isEarned ? AppColors.warning.withAlpha((0.1 * 255).round()) : theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
         border: Border.all(
-          color: isEarned ? AppColors.warning.withOpacity(0.3) : AppColors.onSurface.withOpacity(0.2),
+          color: isEarned ? AppColors.warning.withAlpha((0.3 * 255).round()) : theme.colorScheme.onSurface.withAlpha((0.2 * 255).round()),
           width: 1,
         ),
       ),
@@ -1196,7 +1200,7 @@ class _AchievementCard extends StatelessWidget {
         children: [
           Icon(
             achievement['icon'] as IconData,
-            color: isEarned ? AppColors.warning : AppColors.onSurface.withOpacity(0.5),
+            color: isEarned ? AppColors.warning : theme.colorScheme.onSurface.withAlpha((0.5 * 255).round()),
             size: 32,
           ),
           const SizedBox(height: AppTheme.sm),
@@ -1204,7 +1208,7 @@ class _AchievementCard extends StatelessWidget {
             achievement['title'] as String,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: isEarned ? AppColors.onBackground : AppColors.onSurface.withOpacity(0.5),
+              color: isEarned ? theme.colorScheme.onSurface : theme.colorScheme.onSurface.withAlpha((0.5 * 255).round()),
             ),
             textAlign: TextAlign.center,
           ),
@@ -1212,7 +1216,7 @@ class _AchievementCard extends StatelessWidget {
           Text(
             achievement['description'] as String,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: isEarned ? AppColors.onSurface : AppColors.onSurface.withOpacity(0.5),
+              color: isEarned ? theme.colorScheme.onSurface : theme.colorScheme.onSurface.withAlpha((0.5 * 255).round()),
             ),
             textAlign: TextAlign.center,
             maxLines: 2,

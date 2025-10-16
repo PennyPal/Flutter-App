@@ -92,7 +92,7 @@ class LearnPageMethods {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppColors.success.withOpacity(0.1),
+                      color: AppColors.success.withAlpha((0.1 * 255).round()),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -181,7 +181,7 @@ class LearnPageMethods {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: (course['color'] as Color).withOpacity(0.1),
+                  color: (course['color'] as Color).withAlpha((0.1 * 255).round()),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
@@ -342,7 +342,7 @@ class LearnPageMethods {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: (course['color'] as Color).withOpacity(0.1),
+                    color: (course['color'] as Color).withAlpha((0.1 * 255).round()),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(

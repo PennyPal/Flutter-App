@@ -34,9 +34,9 @@ class AppTheme {
   /// Main app theme
   static ThemeData get theme => ThemeData(
         useMaterial3: true,
-        colorScheme: AppColors.colorScheme,
-        textTheme: AppTextTheme.textTheme,
-        scaffoldBackgroundColor: AppColors.background,
+  colorScheme: AppColors.colorScheme.copyWith(background: AppColors.background),
+  textTheme: AppTextTheme.textTheme,
+  scaffoldBackgroundColor: AppColors.background,
         
         // App Bar Theme
         appBarTheme: AppBarTheme(

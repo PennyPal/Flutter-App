@@ -68,13 +68,13 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
+  final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(_isEditing ? 'Edit Transaction' : 'Add Transaction'),
-        backgroundColor: AppColors.background,
+        backgroundColor: theme.colorScheme.primary,
         elevation: 0,
         leading: IconButton(
           onPressed: () => context.pop(),
@@ -85,8 +85,8 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
             onPressed: _saveTransaction,
             child: Text(
               _isEditing ? 'Update' : 'Save',
-              style: const TextStyle(
-                color: AppColors.primary,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -179,6 +179,7 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
   }
 
   Widget _buildAmountInput() {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -207,9 +208,9 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
             ),
-            focusedBorder: OutlineInputBorder(
+              focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
-              borderSide: const BorderSide(color: AppColors.primary, width: 2),
+              borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
             ),
           ),
           style: TextStyle(
@@ -233,6 +234,7 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
   }
 
   Widget _buildTitleInput() {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -253,7 +255,7 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
-              borderSide: const BorderSide(color: AppColors.primary, width: 2),
+              borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
             ),
           ),
           validator: (value) {
@@ -268,6 +270,7 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
   }
 
   Widget _buildCategorySelector() {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -275,7 +278,7 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
           'Category',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: AppColors.onBackground,
+            color: theme.colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: AppTheme.md),
@@ -304,10 +307,10 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
                 child: Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: isSelected ? AppColors.primary.withOpacity(0.1) : AppColors.surface,
+                    color: isSelected ? theme.colorScheme.primary.withAlpha((0.1 * 255).round()) : theme.colorScheme.surface,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: isSelected ? AppColors.primary : AppColors.onSurface.withOpacity(0.2),
+                      color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withAlpha((0.2 * 255).round()),
                       width: isSelected ? 2 : 1,
                     ),
                   ),
@@ -317,7 +320,7 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
                     children: [
                       Icon(
                         category['icon'],
-                        color: isSelected ? AppColors.primary : category['color'],
+                        color: isSelected ? theme.colorScheme.primary : category['color'],
                         size: 18,
                       ),
                       const SizedBox(height: 2),
@@ -325,7 +328,7 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
                         child: Text(
                           category['name'],
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: isSelected ? AppColors.primary : AppColors.onBackground,
+                            color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
                             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                             fontSize: 10,
                           ),
@@ -346,6 +349,7 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
   }
 
   Widget _buildDateSelector() {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -362,10 +366,10 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
           child: Container(
             padding: const EdgeInsets.all(AppTheme.lg),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
               border: Border.all(
-                color: AppColors.onSurface.withOpacity(0.2),
+                color: theme.colorScheme.onSurface.withAlpha((0.2 * 255).round()),
                 width: 1,
               ),
             ),
@@ -373,20 +377,20 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
               children: [
                 Icon(
                   Icons.calendar_today,
-                  color: AppColors.primary,
+                  color: theme.colorScheme.primary,
                   size: 20,
                 ),
                 const SizedBox(width: AppTheme.md),
                 Text(
                   _formatDate(_selectedDate),
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: AppColors.onBackground,
+                    color: theme.colorScheme.onSurface,
                   ),
                 ),
                 const Spacer(),
-                const Icon(
+                Icon(
                   Icons.arrow_forward_ios,
-                  color: AppColors.onSurface,
+                  color: theme.colorScheme.onSurface,
                   size: 16,
                 ),
               ],
@@ -398,6 +402,7 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
   }
 
   Widget _buildNotesInput() {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -419,7 +424,7 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
-              borderSide: const BorderSide(color: AppColors.primary, width: 2),
+              borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
             ),
           ),
         ),
@@ -428,13 +433,14 @@ class _TransactionAddPageState extends State<TransactionAddPage> {
   }
 
   Widget _buildSaveButton() {
+    final theme = Theme.of(context);
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: _saveTransaction,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.onPrimary,
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.onPrimary,
           padding: const EdgeInsets.symmetric(vertical: AppTheme.lg),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
@@ -550,10 +556,10 @@ class _TypeCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(AppTheme.lg),
         decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.1) : AppColors.surface,
+          color: isSelected ? color.withAlpha((0.1 * 255).round()) : AppColors.surface,
           borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
           border: Border.all(
-            color: isSelected ? color : AppColors.onSurface.withOpacity(0.2),
+            color: isSelected ? color : AppColors.onSurface.withAlpha((0.2 * 255).round()),
             width: isSelected ? 2 : 1,
           ),
         ),

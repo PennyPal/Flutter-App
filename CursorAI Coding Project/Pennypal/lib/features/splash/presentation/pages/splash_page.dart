@@ -1,5 +1,8 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../shared/services/settings_service.dart';
+import '../../../auth/data/services/auth_service.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/color_scheme.dart';
 
@@ -16,6 +19,7 @@ class _SplashPageState extends State<SplashPage>
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
+  Timer? _navigationTimer;
 
   @override
   void initState() {
@@ -43,18 +47,32 @@ class _SplashPageState extends State<SplashPage>
 
     _controller.forward();
 
-    // Navigate to next screen after animation
-    Future.delayed(const Duration(milliseconds: 2500), () {
-      if (mounted) {
-        // TODO: Check authentication state and onboarding status
-        // For now, go to welcome page
-        context.go('/welcome');
+    // Navigate to next screen after animation using a cancellable Timer
+    _navigationTimer = Timer(const Duration(milliseconds: 2500), () async {
+      if (!mounted) return;
+      final auth = AuthService();
+      try {
+        final isAuth = await auth.isAuthenticated();
+        if (isAuth) {
+          // load per-user settings and go to home
+          final user = await auth.getCurrentUser();
+          final userKey = user?.email ?? '';
+          if (userKey.isNotEmpty) {
+            await SettingsService().loadForUser(userKey);
+          }
+          if (mounted) context.go(RouteNames.home); // main shell home route
+        } else {
+          if (mounted) context.go('/welcome');
+        }
+      } catch (e) {
+        if (mounted) context.go('/welcome');
       }
     });
   }
 
   @override
   void dispose() {
+    _navigationTimer?.cancel();
     _controller.dispose();
     super.dispose();
   }

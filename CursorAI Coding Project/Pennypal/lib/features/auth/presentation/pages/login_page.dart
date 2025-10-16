@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../data/services/auth_service.dart';
+import '../../../../shared/services/settings_service.dart';
+import '../../../../shared/providers/settings_notifier.dart';
+import '../../../../shared/services/user_service.dart';
 import 'otp_login_page.dart';
 
 /// Login page with email/password authentication
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -42,7 +46,22 @@ class _LoginPageState extends State<LoginPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
-      
+      // After successful sign-in, load per-user settings and update notifier
+      try {
+        final user = await _authService.getCurrentUser();
+        final userKey = (user != null && (user.email?.isNotEmpty == true))
+            ? user.email!
+            : _emailController.text.trim();
+        await SettingsService().loadForUser(userKey);
+        // Update notifier using public API to persist and notify
+        final themeMode = SettingsService().themeMode;
+        final accent = SettingsService().accentColor;
+        ref.read(settingsNotifierProvider.notifier).updateThemeMode(themeMode);
+        ref.read(settingsNotifierProvider.notifier).updateAccentColor(accent);
+      } catch (_) {
+        // Non-fatal: if settings can't be loaded, continue to app
+      }
+
       if (mounted) {
         context.go(RouteNames.home);
       }
@@ -72,7 +91,19 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       await _authService.signInWithGoogle();
-      
+      // Attempt to load settings for the authenticated user
+      try {
+        final user = await _authService.getCurrentUser();
+        if (user != null) {
+          final userKey = user.email ?? UserService().username;
+          await SettingsService().loadForUser(userKey);
+          final themeMode = SettingsService().themeMode;
+          final accent = SettingsService().accentColor;
+          ref.read(settingsNotifierProvider.notifier).updateThemeMode(themeMode);
+          ref.read(settingsNotifierProvider.notifier).updateAccentColor(accent);
+        }
+      } catch (_) {}
+
       if (mounted) {
         context.go(RouteNames.home);
       }
@@ -102,7 +133,19 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       await _authService.signInWithApple();
-      
+      // Attempt to load settings for the authenticated user
+      try {
+        final user = await _authService.getCurrentUser();
+        if (user != null) {
+          final userKey = user.email ?? UserService().username;
+          await SettingsService().loadForUser(userKey);
+          final themeMode = SettingsService().themeMode;
+          final accent = SettingsService().accentColor;
+          ref.read(settingsNotifierProvider.notifier).updateThemeMode(themeMode);
+          ref.read(settingsNotifierProvider.notifier).updateAccentColor(accent);
+        }
+      } catch (_) {}
+
       if (mounted) {
         context.go(RouteNames.home);
       }
@@ -310,9 +353,10 @@ class _LoginPageState extends State<LoginPage> {
                 
                 const SizedBox(height: AppTheme.lg),
                 
-                // Sign in button
+                // sign in button (fixed green, unaffected by user-selected accent)
                 ElevatedButton(
                   onPressed: _isLoading ? null : _signIn,
+                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
                   child: _isLoading
                       ? const SizedBox(
                           height: 20,
@@ -324,7 +368,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                         )
-                      : const Text('Sign In'),
+                      : const Text('sign in'),
                 ),
                 
                 const SizedBox(height: AppTheme.lg),

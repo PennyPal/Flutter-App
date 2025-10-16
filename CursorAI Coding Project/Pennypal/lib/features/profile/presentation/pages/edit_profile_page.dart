@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_names.dart';
-import '../../../../core/theme/color_scheme.dart';
-import '../../../../core/theme/app_theme.dart';
+// theme imports removed: using Theme.of(context) instead
 import '../../../../shared/services/user_service.dart';
 import '../../../../shared/services/profile_picture_service.dart';
 import '../widgets/profile_picture_selection_dialog.dart';
@@ -43,6 +42,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
     super.initState();
     _initializeControllers();
   }
+
+  String _fromParam = '';
 
   void _initializeControllers() {
     _nameController = TextEditingController(text: _userService.userName);
@@ -112,11 +113,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Read optional query param 'from' to determine where to go back to
+  // On web and other platforms, read the query parameter from the current URI
+  _fromParam = Uri.base.queryParameters['from'] ?? '';
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8E8EB), // Light pink background
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF6B2C91), // Deep royal magenta
-        foregroundColor: Colors.white,
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
         title: const Text('Edit Profile'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -125,9 +131,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
         actions: [
           TextButton(
             onPressed: _saveProfile,
+            style: TextButton.styleFrom(foregroundColor: theme.colorScheme.onPrimary),
             child: const Text(
               'Save',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -140,7 +147,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Profile Picture Section
-              _buildProfilePictureSection(),
+                _buildProfilePictureSection(),
               
               const SizedBox(height: 24),
               
@@ -231,16 +238,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 child: ElevatedButton(
                   onPressed: _saveProfile,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6B2C91), // Deep royal magenta
-                    foregroundColor: Colors.white,
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: theme.elevatedButtonTheme.style?.foregroundColor?.resolve({}) ?? theme.colorScheme.onPrimary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Save Changes',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -260,9 +267,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
             width: 120,
             height: 120,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.grey.shade300, width: 2),
+              border: Border.all(color: Theme.of(context).colorScheme.onSurface.withAlpha((0.08 * 255).round()), width: 2),
             ),
           child: Center(
             child: _profilePictureService.getProfilePictureWidget(
@@ -278,10 +285,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
           // Change Picture Button
           TextButton.icon(
             onPressed: _changeProfilePicture,
-            icon: const Icon(Icons.camera_alt, color: Color(0xFF6B2C91)),
-            label: const Text(
+            icon: Icon(Icons.camera_alt, color: Theme.of(context).colorScheme.primary),
+            label: Text(
               'Change Picture',
-              style: TextStyle(color: Color(0xFF6B2C91), fontWeight: FontWeight.w500),
+              style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w500),
             ),
           ),
         ],
@@ -297,13 +304,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
     int maxLines = 1,
     String? Function(String?)? validator,
   }) {
+    final theme = Theme.of(context);
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withAlpha((0.05 * 255).round()),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -316,14 +325,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
         validator: validator,
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: Icon(icon, color: const Color(0xFF6B2C91)),
+          prefixIcon: Icon(icon, color: theme.colorScheme.primary),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide.none,
           ),
           filled: true,
-          fillColor: Colors.white,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          fillColor: theme.colorScheme.surfaceVariant ?? theme.colorScheme.surface,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
       ),
     );
@@ -348,7 +357,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (_hasFormChanges()) {
       _showUnsavedChangesDialog();
     } else {
-      context.go(RouteNames.profile);
+      // Prefer popping the navigation stack when possible so the originating
+      // route (profile or settings) is restored. If we can't pop (e.g. deep
+      // link), fall back to route by query param.
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+        return;
+      }
+
+      if (_fromParam == 'dashboard') {
+        context.go(RouteNames.home);
+      } else if (_fromParam == 'profile') {
+        context.go(RouteNames.profile);
+      } else if (_fromParam == 'settings') {
+        context.go(RouteNames.settings);
+      } else {
+        context.go(RouteNames.profile);
+      }
     }
   }
 
@@ -362,7 +387,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              context.go(RouteNames.profile);
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              } else {
+                context.go(RouteNames.profile);
+              }
             },
             child: const Text('Discard'),
           ),
@@ -382,9 +411,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF6B2C91).withOpacity(0.2)),
+  border: Border.all(color: Theme.of(context).colorScheme.primary.withAlpha((0.2 * 255).round())),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -393,17 +422,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
             children: [
               Icon(
                 Icons.lock_outline,
-                color: const Color(0xFF6B2C91),
+                color: Theme.of(context).colorScheme.primary,
                 size: 20,
               ),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 'Change Password',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF6B2C91),
-                ),
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary),
               ),
             ],
           ),
@@ -443,16 +468,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: ElevatedButton(
               onPressed: _changePassword,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6B2C91),
-                foregroundColor: Colors.white,
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text(
+              child: Text(
                 'Change Password',
-                style: TextStyle(fontWeight: FontWeight.w500),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
               ),
             ),
           ),
@@ -466,18 +491,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
     required String label,
     required IconData icon,
   }) {
+    final theme = Theme.of(context);
+
     return TextFormField(
       controller: controller,
       obscureText: true,
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: const Color(0xFF6B2C91)),
+        prefixIcon: Icon(icon, color: theme.colorScheme.primary),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide.none,
         ),
         filled: true,
-        fillColor: Colors.grey.shade50,
+        fillColor: theme.colorScheme.surfaceVariant ?? theme.colorScheme.surface,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
     );
@@ -557,8 +584,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ),
       );
       
-      // Navigate back to profile page
-      context.go(RouteNames.profile);
+      // Navigate back to profile page (prefer popping if possible to restore origin)
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      } else {
+        context.go(RouteNames.profile);
+      }
     }
   }
 }

@@ -39,12 +39,12 @@ class _TransactionsPageState extends State<TransactionsPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Transactions'),
-        backgroundColor: AppColors.background,
+        backgroundColor: theme.colorScheme.primary,
         elevation: 0,
         actions: [
           IconButton(
@@ -105,13 +105,14 @@ class _TransactionsPageState extends State<TransactionsPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.go(RouteNames.transactionAdd),
-        backgroundColor: AppColors.primary,
-        child: const Icon(Icons.add, color: AppColors.onPrimary),
+        backgroundColor: theme.colorScheme.primary,
+        child: Icon(Icons.add, color: theme.colorScheme.onPrimary),
       ),
     );
   }
 
   Widget _buildSummaryCards() {
+    final theme = Theme.of(context);
     final totalIncome = _transactionService.totalIncome;
     final totalExpense = _transactionService.totalExpenses;
     final netAmount = _transactionService.netAmount;
@@ -124,7 +125,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
             child: _SummaryCard(
               title: 'Total Income',
               amount: totalIncome,
-              color: AppColors.success,
+              color: theme.colorScheme.secondary,
               icon: Icons.trending_up,
             ),
           ),
@@ -152,6 +153,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
   }
 
   Widget _buildFilterChips() {
+    final theme = Theme.of(context);
     final filters = ['All', 'Income', 'Expense'];
     
     return Container(
@@ -174,11 +176,11 @@ class _TransactionsPageState extends State<TransactionsPage> {
                   _selectedFilter = filter;
                 });
               },
-              backgroundColor: AppColors.surface,
-              selectedColor: AppColors.primary.withOpacity(0.2),
-              checkmarkColor: AppColors.primary,
+              backgroundColor: theme.colorScheme.surface,
+              selectedColor: theme.colorScheme.primary.withAlpha((0.2 * 255).round()),
+              checkmarkColor: theme.colorScheme.primary,
               labelStyle: TextStyle(
-                color: isSelected ? AppColors.primary : AppColors.onBackground,
+                color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
             ),
@@ -189,6 +191,8 @@ class _TransactionsPageState extends State<TransactionsPage> {
   }
 
   Widget _buildEmptyState() {
+    final theme = Theme.of(context);
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -196,24 +200,24 @@ class _TransactionsPageState extends State<TransactionsPage> {
           Icon(
             Icons.receipt_long_outlined,
             size: 80,
-            color: AppColors.onSurface.withOpacity(0.5),
+            color: theme.colorScheme.onSurface.withAlpha((0.5 * 255).round()),
           ),
           const SizedBox(height: AppTheme.lg),
-          Text(
-            'No transactions found',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: AppColors.onBackground,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+                Text(
+                'No transactions found',
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  color: theme.colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
           const SizedBox(height: AppTheme.sm),
           Text(
             _searchQuery.isNotEmpty || _selectedFilter != 'All'
                 ? 'Try adjusting your search or filter'
                 : 'Add your first transaction to get started',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: AppColors.onSecondary,
-            ),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSecondary,
+                ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppTheme.xl),
@@ -222,8 +226,8 @@ class _TransactionsPageState extends State<TransactionsPage> {
             icon: const Icon(Icons.add),
             label: const Text('Add Transaction'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: AppColors.onPrimary,
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: theme.colorScheme.onPrimary,
               padding: const EdgeInsets.symmetric(
                 horizontal: AppTheme.xl,
                 vertical: AppTheme.md,
@@ -275,36 +279,39 @@ class _TransactionsPageState extends State<TransactionsPage> {
   void _showFilterDialog() {
     showModalBottomSheet(
       context: context,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(AppTheme.lg),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Filter Transactions',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: AppColors.onBackground,
+      builder: (context) {
+        final theme = Theme.of(context);
+        return Container(
+          padding: const EdgeInsets.all(AppTheme.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+                  Text(
+                'Filter Transactions',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onSurface,
+                ),
               ),
-            ),
-            const SizedBox(height: AppTheme.lg),
-            ...['All', 'Income', 'Expense'].map((filter) => ListTile(
-              title: Text(filter),
-              leading: Radio<String>(
-                value: filter,
-                groupValue: _selectedFilter,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedFilter = value!;
-                  });
-                  Navigator.pop(context);
-                },
-                activeColor: AppColors.primary,
-              ),
-            )),
-          ],
-        ),
-      ),
+              const SizedBox(height: AppTheme.lg),
+              ...['All', 'Income', 'Expense'].map((filter) => ListTile(
+                title: Text(filter),
+                  leading: Radio<String>(
+                  value: filter,
+                  groupValue: _selectedFilter,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedFilter = value!;
+                    });
+                    Navigator.pop(context);
+                  },
+                  activeColor: theme.colorScheme.primary,
+                ),
+              )),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -326,7 +333,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                   Container(
                     padding: const EdgeInsets.all(AppTheme.sm),
                     decoration: BoxDecoration(
-                      color: transaction['color'].withOpacity(0.1),
+                      color: transaction['color'].withAlpha((0.1 * 255).round()),
                       borderRadius: BorderRadius.circular(AppTheme.radiusSm.x),
                     ),
                     child: Icon(
@@ -516,7 +523,7 @@ class _SummaryCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
         boxShadow: [
           BoxShadow(
-            color: AppColors.onSurface.withOpacity(0.1),
+            color: AppColors.onSurface.withAlpha((0.1 * 255).round()),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -625,7 +632,7 @@ class _TransactionCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
           boxShadow: [
             BoxShadow(
-              color: AppColors.onSurface.withOpacity(0.1),
+              color: AppColors.onSurface.withAlpha((0.1 * 255).round()),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -636,7 +643,7 @@ class _TransactionCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(AppTheme.sm),
               decoration: BoxDecoration(
-                color: transaction['color'].withOpacity(0.1),
+                color: transaction['color'].withAlpha((0.1 * 255).round()),
                 borderRadius: BorderRadius.circular(AppTheme.radiusSm.x),
               ),
               child: Icon(
@@ -703,8 +710,8 @@ class _TransactionCard extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: isIncome 
-                        ? AppColors.success.withOpacity(0.1)
-                        : AppColors.error.withOpacity(0.1),
+                        ? AppColors.success.withAlpha((0.1 * 255).round())
+                        : AppColors.error.withAlpha((0.1 * 255).round()),
                     borderRadius: BorderRadius.circular(AppTheme.radiusSm.x),
                   ),
                   child: Text(

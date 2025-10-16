@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../shared/services/settings_service.dart';
+import '../../../../core/router/route_names.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 /// Location settings page
 class LocationSettingsPage extends StatefulWidget {
@@ -15,15 +17,17 @@ class _LocationSettingsPageState extends State<LocationSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8E8EB),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF6B2C91),
-        foregroundColor: Colors.white,
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
         title: const Text('Location Settings'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+          onPressed: () => context.go(RouteNames.settings),
         ),
       ),
       body: SingleChildScrollView(
@@ -55,15 +59,15 @@ class _LocationSettingsPageState extends State<LocationSettingsPage> {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.orange.shade50,
+                color: theme.colorScheme.primary.withAlpha((0.08 * 255).round()),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.orange.shade200),
+                border: Border.all(color: theme.colorScheme.primary.withAlpha((0.2 * 255).round())),
               ),
               child: Row(
                 children: [
                   Icon(
                     Icons.location_on,
-                    color: Colors.orange.shade700,
+                    color: theme.colorScheme.primary.withAlpha((0.8 * 255).round()),
                     size: 20,
                   ),
                   const SizedBox(width: 12),
@@ -72,7 +76,7 @@ class _LocationSettingsPageState extends State<LocationSettingsPage> {
                       'Location data helps provide personalized financial insights and local offers.',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.orange.shade700,
+                        color: theme.colorScheme.primary.withAlpha((0.8 * 255).round()),
                       ),
                     ),
                   ),
@@ -92,7 +96,7 @@ class _LocationSettingsPageState extends State<LocationSettingsPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2))],
+  boxShadow: [BoxShadow(color: Colors.black.withAlpha((0.05 * 255).round()), blurRadius: 8, offset: const Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,8 +121,16 @@ class _LocationSettingsPageState extends State<LocationSettingsPage> {
   }
 
   void _updateLocationEnabled(bool value) {
-    setState(() => _settingsService.updateLocationSettings(locationEnabled: value));
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Location ${value ? 'enabled' : 'disabled'}'), backgroundColor: Colors.green));
+    if (value) {
+      Permission.location.request().then((status) {
+        final granted = status.isGranted;
+        setState(() => _settingsService.updateLocationSettings(locationEnabled: granted));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Location ${granted ? 'enabled' : 'denied by user'}'), backgroundColor: granted ? Colors.green : Colors.red));
+      });
+    } else {
+      setState(() => _settingsService.updateLocationSettings(locationEnabled: false));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Location disabled'), backgroundColor: Colors.green));
+    }
   }
 
   void _updateLocationBasedFeatures(bool value) {

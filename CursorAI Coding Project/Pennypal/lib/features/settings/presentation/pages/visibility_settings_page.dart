@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../shared/services/settings_service.dart';
+import '../../../../core/router/route_names.dart';
 
 /// Visibility settings page
 class VisibilitySettingsPage extends StatefulWidget {
@@ -15,15 +16,16 @@ class _VisibilitySettingsPageState extends State<VisibilitySettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: const Color(0xFFF8E8EB),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF6B2C91),
-        foregroundColor: Colors.white,
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
         title: const Text('Visibility Settings'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+          onPressed: () => context.go(RouteNames.settings),
         ),
       ),
       body: SingleChildScrollView(
@@ -97,15 +99,16 @@ class _VisibilitySettingsPageState extends State<VisibilitySettingsPage> {
     required String title,
     required List<Widget> children,
   }) {
+    final theme = Theme.of(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withAlpha((0.05 * 255).round()),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -116,10 +119,10 @@ class _VisibilitySettingsPageState extends State<VisibilitySettingsPage> {
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: theme.colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 16),
@@ -135,12 +138,13 @@ class _VisibilitySettingsPageState extends State<VisibilitySettingsPage> {
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
+    final theme = Theme.of(context);
     return SwitchListTile(
       title: Text(title),
       subtitle: Text(subtitle),
       value: value,
       onChanged: onChanged,
-      activeColor: const Color(0xFF6B2C91),
+      activeThumbColor: theme.colorScheme.primary,
       contentPadding: EdgeInsets.zero,
     );
   }

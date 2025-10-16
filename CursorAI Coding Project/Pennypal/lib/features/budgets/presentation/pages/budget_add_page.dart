@@ -78,12 +78,12 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(_isEditing ? 'Edit Budget' : (_isSavingsGoal ? 'Create Savings Goal' : 'Create Budget')),
-        backgroundColor: AppColors.background,
+        backgroundColor: theme.colorScheme.primary,
         elevation: 0,
         leading: IconButton(
           onPressed: () => context.pop(),
@@ -94,8 +94,8 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
             onPressed: _saveBudget,
             child: Text(
               _isEditing ? 'Update' : 'Save',
-              style: const TextStyle(
-                color: AppColors.primary,
+              style: TextStyle(
+                color: theme.colorScheme.onPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -155,6 +155,7 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
   }
 
   Widget _buildTypeSelector() {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -162,30 +163,30 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
           'Type',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: AppColors.onBackground,
+            color: theme.colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: AppTheme.md),
         Row(
           children: [
             Expanded(
-              child: _TypeCard(
-                title: 'Spending Budget',
-                icon: Icons.account_balance_wallet,
-                color: AppColors.warning,
-                isSelected: _selectedType == 'spending',
-                onTap: () => setState(() => _selectedType = 'spending'),
-              ),
+                child: _TypeCard(
+                  title: 'Spending Budget',
+                  icon: Icons.account_balance_wallet,
+                  color: AppColors.warning,
+                  isSelected: _selectedType == 'spending',
+                  onTap: () => setState(() => _selectedType = 'spending'),
+                ),
             ),
             const SizedBox(width: AppTheme.md),
             Expanded(
-              child: _TypeCard(
-                title: 'Savings Goal',
-                icon: Icons.savings,
-                color: AppColors.success,
-                isSelected: _selectedType == 'savings',
-                onTap: () => setState(() => _selectedType = 'savings'),
-              ),
+                child: _TypeCard(
+                  title: 'Savings Goal',
+                  icon: Icons.savings,
+                  color: AppColors.success,
+                  isSelected: _selectedType == 'savings',
+                  onTap: () => setState(() => _selectedType = 'savings'),
+                ),
             ),
           ],
         ),
@@ -194,6 +195,7 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
   }
 
   Widget _buildTitleInput() {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -201,20 +203,20 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
           _isSavingsGoal ? 'Goal Name' : 'Budget Name',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: AppColors.onBackground,
+            color: theme.colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: AppTheme.md),
         TextFormField(
           controller: _titleController,
-          decoration: InputDecoration(
+                    decoration: InputDecoration(
             hintText: _isSavingsGoal ? 'e.g., "Vacation to Japan"' : 'e.g., "Monthly Food Budget"',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
-              borderSide: const BorderSide(color: AppColors.primary, width: 2),
+              borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
             ),
           ),
           validator: (value) {
@@ -229,6 +231,7 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
   }
 
   Widget _buildCategorySelector() {
+    final theme = Theme.of(context);
     final categories = _isSavingsGoal ? _savingsGoals : _spendingCategories;
     
     return Column(
@@ -238,7 +241,7 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
           _isSavingsGoal ? 'Savings Goal' : 'Category',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: AppColors.onBackground,
+            color: theme.colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: AppTheme.md),
@@ -268,10 +271,10 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
                 child: Container(
                   padding: const EdgeInsets.all(AppTheme.sm),
                   decoration: BoxDecoration(
-                    color: isSelected ? AppColors.primary.withOpacity(0.1) : AppColors.surface,
+                    color: isSelected ? theme.colorScheme.primary.withAlpha((0.1 * 255).round()) : theme.colorScheme.surface,
                     borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
                     border: Border.all(
-                      color: isSelected ? AppColors.primary : AppColors.onSurface.withOpacity(0.2),
+                      color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withAlpha((0.2 * 255).round()),
                       width: isSelected ? 2 : 1,
                     ),
                   ),
@@ -280,14 +283,14 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
                     children: [
                       Icon(
                         category['icon'],
-                        color: isSelected ? AppColors.primary : category['color'],
+                        color: isSelected ? theme.colorScheme.primary : category['color'],
                         size: 24,
                       ),
                       const SizedBox(height: 4),
                       Text(
                         category['name'],
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: isSelected ? AppColors.primary : AppColors.onBackground,
+                          color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onBackground,
                           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                         ),
                         textAlign: TextAlign.center,
@@ -306,6 +309,7 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
   }
 
   Widget _buildAmountInput() {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -313,7 +317,7 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
           _isSavingsGoal ? 'Monthly Savings Amount' : 'Budget Amount',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: AppColors.onBackground,
+            color: theme.colorScheme.onBackground,
           ),
         ),
         const SizedBox(height: AppTheme.md),
@@ -323,10 +327,10 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
           inputFormatters: [
             FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
           ],
-          decoration: InputDecoration(
+                    decoration: InputDecoration(
             prefixText: '\$ ',
-            prefixStyle: const TextStyle(
-              color: AppColors.primary,
+            prefixStyle: TextStyle(
+              color: theme.colorScheme.primary,
               fontWeight: FontWeight.w600,
               fontSize: 20,
             ),
@@ -336,14 +340,14 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
-              borderSide: const BorderSide(color: AppColors.primary, width: 2),
+              borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
             ),
           ),
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: AppColors.primary,
-          ),
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.primary,
+            ),
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Please enter an amount';
@@ -360,6 +364,7 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
   }
 
   Widget _buildTargetAmountInput() {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -367,7 +372,7 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
           'Target Amount',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: AppColors.onBackground,
+            color: theme.colorScheme.onBackground,
           ),
         ),
         const SizedBox(height: AppTheme.md),
@@ -377,20 +382,20 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
           inputFormatters: [
             FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
           ],
-          decoration: InputDecoration(
-            prefixText: '\$ ',
-            prefixStyle: const TextStyle(
-              color: AppColors.success,
-              fontWeight: FontWeight.w600,
-              fontSize: 20,
-            ),
+            decoration: InputDecoration(
+              prefixText: '\$ ',
+              prefixStyle: const TextStyle(
+                color: AppColors.success,
+                fontWeight: FontWeight.w600,
+                fontSize: 20,
+              ),
             hintText: '0.00',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
-              borderSide: const BorderSide(color: AppColors.primary, width: 2),
+              borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
             ),
           ),
           style: const TextStyle(
@@ -418,6 +423,7 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
   }
 
   Widget _buildPeriodSelector() {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -425,7 +431,7 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
           'Period',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: AppColors.onBackground,
+            color: theme.colorScheme.onBackground,
           ),
         ),
         const SizedBox(height: AppTheme.md),
@@ -437,7 +443,7 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
-              borderSide: const BorderSide(color: AppColors.primary, width: 2),
+              borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
             ),
           ),
           items: _periods.map((period) => DropdownMenuItem(
@@ -455,6 +461,7 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
   }
 
   Widget _buildTargetDateSelector() {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -462,7 +469,7 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
           'Target Date',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: AppColors.onBackground,
+            color: theme.colorScheme.onBackground,
           ),
         ),
         const SizedBox(height: AppTheme.md),
@@ -471,10 +478,10 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
           child: Container(
             padding: const EdgeInsets.all(AppTheme.lg),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
               border: Border.all(
-                color: AppColors.onSurface.withOpacity(0.2),
+                color: theme.colorScheme.onSurface.withAlpha((0.2 * 255).round()),
                 width: 1,
               ),
             ),
@@ -482,20 +489,20 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
               children: [
                 Icon(
                   Icons.calendar_today,
-                  color: AppColors.primary,
+                  color: theme.colorScheme.primary,
                   size: 20,
                 ),
                 const SizedBox(width: AppTheme.md),
                 Text(
                   _formatTargetDate(_targetDate),
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: AppColors.onBackground,
+                    color: theme.colorScheme.onBackground,
                   ),
                 ),
                 const Spacer(),
-                const Icon(
+                Icon(
                   Icons.arrow_forward_ios,
-                  color: AppColors.onSurface,
+                  color: theme.colorScheme.onSurface,
                   size: 16,
                 ),
               ],
@@ -507,6 +514,7 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
   }
 
   Widget _buildNotesInput() {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -514,7 +522,7 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
           'Notes (Optional)',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: AppColors.onBackground,
+            color: theme.colorScheme.onBackground,
           ),
         ),
         const SizedBox(height: AppTheme.md),
@@ -528,7 +536,7 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
-              borderSide: const BorderSide(color: AppColors.primary, width: 2),
+              borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
             ),
           ),
         ),
@@ -537,13 +545,14 @@ class _BudgetAddPageState extends State<BudgetAddPage> {
   }
 
   Widget _buildSaveButton() {
+    final theme = Theme.of(context);
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: _saveBudget,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.onPrimary,
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.onPrimary,
           padding: const EdgeInsets.symmetric(vertical: AppTheme.lg),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
@@ -642,15 +651,16 @@ class _TypeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+  final theme = Theme.of(context);
+  return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(AppTheme.lg),
         decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.1) : AppColors.surface,
+          color: isSelected ? color.withAlpha((0.1 * 255).round()) : theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
           border: Border.all(
-            color: isSelected ? color : AppColors.onSurface.withOpacity(0.2),
+            color: isSelected ? color : theme.colorScheme.onSurface.withAlpha((0.2 * 255).round()),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -658,14 +668,14 @@ class _TypeCard extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: isSelected ? color : AppColors.onSurface,
+              color: isSelected ? color : theme.colorScheme.onSurface,
               size: 32,
             ),
             const SizedBox(height: AppTheme.sm),
             Text(
               title,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: isSelected ? color : AppColors.onBackground,
+                color: isSelected ? color : theme.colorScheme.onBackground,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
               textAlign: TextAlign.center,

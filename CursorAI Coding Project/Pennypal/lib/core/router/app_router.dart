@@ -144,63 +144,61 @@ class AppRouter {
               name: 'profile',
               builder: (context, state) => const ProfilePage(),
             ),
+                // Settings (moved inside ShellRoute so these pages inherit the in-app Theme)
+                GoRoute(
+                  path: RouteNames.settings,
+                  name: 'settings',
+                  builder: (context, state) => const SettingsPage(),
+                ),
+
+                // Individual Settings Pages
+                GoRoute(
+                  path: RouteNames.themeSettings,
+                  name: 'themeSettings',
+                  builder: (context, state) => const ThemeSettingsPage(),
+                ),
+                GoRoute(
+                  path: RouteNames.visibilitySettings,
+                  name: 'visibilitySettings',
+                  builder: (context, state) => const VisibilitySettingsPage(),
+                ),
+                GoRoute(
+                  path: RouteNames.locationSettings,
+                  name: 'locationSettings',
+                  builder: (context, state) => const LocationSettingsPage(),
+                ),
+                GoRoute(
+                  path: RouteNames.notificationSettings,
+                  name: 'notificationSettings',
+                  builder: (context, state) => const NotificationSettingsPage(),
+                ),
+                GoRoute(
+                  path: RouteNames.advancedSettings,
+                  name: 'advancedSettings',
+                  builder: (context, state) => const AdvancedSettingsPage(),
+                ),
           ],
         ),
+            // Edit Profile (kept outside the shell so it can be pushed/pop'd from multiple entry points)
+            GoRoute(
+              path: RouteNames.profileEdit,
+              name: 'profileEdit',
+              builder: (context, state) => const EditProfilePage(),
+            ),
 
-        // Edit Profile (outside main layout)
-        GoRoute(
-          path: RouteNames.profileEdit,
-          name: 'profileEdit',
-          builder: (context, state) => const EditProfilePage(),
-        ),
+            // Add Transaction (outside main layout)
+            GoRoute(
+              path: RouteNames.transactionAdd,
+              name: 'transactionAdd',
+              builder: (context, state) => const TransactionAddPage(),
+            ),
 
-        // Add Transaction (outside main layout)
-        GoRoute(
-          path: RouteNames.transactionAdd,
-          name: 'transactionAdd',
-          builder: (context, state) => const TransactionAddPage(),
-        ),
-
-        // Add Budget (outside main layout)
-        GoRoute(
-          path: RouteNames.budgetAdd,
-          name: 'budgetAdd',
-          builder: (context, state) => const BudgetAddPage(),
-        ),
-
-        // Settings (outside main layout)
-        GoRoute(
-          path: RouteNames.settings,
-          name: 'settings',
-          builder: (context, state) => const SettingsPage(),
-        ),
-
-        // Individual Settings Pages
-        GoRoute(
-          path: RouteNames.themeSettings,
-          name: 'themeSettings',
-          builder: (context, state) => const ThemeSettingsPage(),
-        ),
-        GoRoute(
-          path: RouteNames.visibilitySettings,
-          name: 'visibilitySettings',
-          builder: (context, state) => const VisibilitySettingsPage(),
-        ),
-        GoRoute(
-          path: RouteNames.locationSettings,
-          name: 'locationSettings',
-          builder: (context, state) => const LocationSettingsPage(),
-        ),
-        GoRoute(
-          path: RouteNames.notificationSettings,
-          name: 'notificationSettings',
-          builder: (context, state) => const NotificationSettingsPage(),
-        ),
-        GoRoute(
-          path: RouteNames.advancedSettings,
-          name: 'advancedSettings',
-          builder: (context, state) => const AdvancedSettingsPage(),
-        ),
+            // Add Budget (outside main layout)
+            GoRoute(
+              path: RouteNames.budgetAdd,
+              name: 'budgetAdd',
+              builder: (context, state) => const BudgetAddPage(),
+            ),
       ],
       
       // Redirect logic for authentication

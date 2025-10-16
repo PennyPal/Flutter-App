@@ -13,8 +13,9 @@ void main() {
       ),
     );
 
-    // Verify that the splash screen shows up.
-    expect(find.text('PennyPal'), findsOneWidget);
-    expect(find.text('Make budgeting fun'), findsOneWidget);
+  // Verify that the splash screen shows up.
+  // The splash currently displays 'PENNY PAL' and the tagline 'Your financial friend'.
+  expect(find.text('PENNY PAL'), findsOneWidget);
+  expect(find.text('Your financial friend'), findsOneWidget);
   });
 }

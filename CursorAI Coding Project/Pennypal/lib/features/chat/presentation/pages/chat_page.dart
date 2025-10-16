@@ -91,12 +91,12 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('AI Financial Advisor'),
-        backgroundColor: AppColors.background,
+        backgroundColor: theme.colorScheme.primary,
         elevation: 0,
         actions: [
           IconButton(
@@ -128,10 +128,10 @@ class _ChatPageState extends State<ChatPage> {
           Container(
             padding: const EdgeInsets.all(AppTheme.lg),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: theme.colorScheme.surface,
               border: Border(
                 top: BorderSide(
-                  color: AppColors.onSurface.withOpacity(0.2),
+                  color: theme.colorScheme.onSurface.withAlpha((0.2 * 255).round()),
                   width: 1,
                 ),
               ),
@@ -144,24 +144,24 @@ class _ChatPageState extends State<ChatPage> {
                     decoration: InputDecoration(
                       hintText: 'Ask me anything about finances...',
                       hintStyle: TextStyle(
-                        color: AppColors.onSurface.withOpacity(0.6),
+                        color: theme.colorScheme.onSurface.withAlpha((0.6 * 255).round()),
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppTheme.radiusLg.x),
-                        borderSide: BorderSide(
-                          color: AppColors.onSurface.withOpacity(0.2),
+                          borderSide: BorderSide(
+                          color: theme.colorScheme.onSurface.withAlpha((0.2 * 255).round()),
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppTheme.radiusLg.x),
-                        borderSide: BorderSide(
-                          color: AppColors.onSurface.withOpacity(0.2),
+                          borderSide: BorderSide(
+                          color: theme.colorScheme.onSurface.withAlpha((0.2 * 255).round()),
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppTheme.radiusLg.x),
-                        borderSide: const BorderSide(
-                          color: AppColors.primary,
+                        borderSide: BorderSide(
+                          color: theme.colorScheme.primary,
                           width: 2,
                         ),
                       ),
@@ -177,23 +177,23 @@ class _ChatPageState extends State<ChatPage> {
                 const SizedBox(width: AppTheme.md),
                 Container(
                   decoration: BoxDecoration(
-                    color: AppColors.primary,
+                    color: theme.colorScheme.primary,
                     borderRadius: BorderRadius.circular(AppTheme.radiusLg.x),
                   ),
                   child: IconButton(
                     onPressed: _isLoading ? null : _sendMessage,
                     icon: _isLoading
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(AppColors.onPrimary),
+                              valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.onPrimary),
                             ),
                           )
-                        : const Icon(
+                        : Icon(
                             Icons.send,
-                            color: AppColors.onPrimary,
+                            color: theme.colorScheme.onPrimary,
                           ),
                   ),
                 ),
@@ -238,12 +238,12 @@ class _ChatBubble extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: AppColors.primary,
+                color: theme.colorScheme.primary,
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.smart_toy,
-                color: AppColors.onPrimary,
+                color: theme.colorScheme.onPrimary,
                 size: 20,
               ),
             ),
@@ -253,14 +253,14 @@ class _ChatBubble extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(AppTheme.md),
               decoration: BoxDecoration(
-                color: message.isUser ? AppColors.primary : AppColors.surface,
+                color: message.isUser ? theme.colorScheme.primary : theme.colorScheme.surface,
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd.x).copyWith(
                   bottomLeft: message.isUser ? Radius.circular(AppTheme.radiusMd.x) : const Radius.circular(4),
                   bottomRight: message.isUser ? const Radius.circular(4) : Radius.circular(AppTheme.radiusMd.x),
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.onSurface.withOpacity(0.1),
+                    color: theme.colorScheme.onSurface.withAlpha((0.1 * 255).round()),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -272,16 +272,16 @@ class _ChatBubble extends StatelessWidget {
                   Text(
                     message.text,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: message.isUser ? AppColors.onPrimary : AppColors.onBackground,
+                      color: message.isUser ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: AppTheme.xs),
                   Text(
                     _formatTime(message.timestamp),
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: message.isUser 
-                          ? AppColors.onPrimary.withOpacity(0.7)
-                          : AppColors.onSecondary,
+            color: message.isUser 
+              ? theme.colorScheme.onPrimary.withAlpha((0.7 * 255).round())
+              : theme.colorScheme.onSecondary,
                     ),
                   ),
                 ],
@@ -294,14 +294,14 @@ class _ChatBubble extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: AppColors.secondary,
+                color: theme.colorScheme.secondary,
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(
-                Icons.person,
-                color: AppColors.onPrimary,
-                size: 20,
-              ),
+                child: Icon(
+                  Icons.person,
+                  color: theme.colorScheme.onPrimary,
+                  size: 20,
+                ),
             ),
           ],
         ],
@@ -336,12 +336,12 @@ class _LoadingIndicator extends StatelessWidget {
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: AppColors.primary,
+              color: Theme.of(context).colorScheme.primary,
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Icon(
               Icons.smart_toy,
-              color: AppColors.onPrimary,
+              color: Colors.white,
               size: 20,
             ),
           ),
@@ -349,13 +349,13 @@ class _LoadingIndicator extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(AppTheme.md),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(AppTheme.radiusMd.x).copyWith(
                 bottomLeft: const Radius.circular(4),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.onSurface.withOpacity(0.1),
+                  color: Theme.of(context).colorScheme.onSurface.withAlpha((0.1 * 255).round()),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -369,14 +369,14 @@ class _LoadingIndicator extends StatelessWidget {
                   height: 16,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                    valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
                   ),
                 ),
                 const SizedBox(width: AppTheme.sm),
                 Text(
                   'Thinking...',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.onSecondary,
+                    color: Theme.of(context).colorScheme.onSecondary,
                   ),
                 ),
               ],

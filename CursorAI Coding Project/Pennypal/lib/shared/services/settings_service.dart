@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import '../../core/constants/app_constants.dart';
 
 /// Service for managing user settings and preferences
 class SettingsService {
@@ -171,6 +173,31 @@ class SettingsService {
       'analyticsEnabled': _analyticsEnabled,
       'accountStatus': _accountStatus,
     };
+  }
+
+  /// Persist current settings for a given user id into Hive
+  Future<void> saveForUser(String userId) async {
+    try {
+      final box = await Hive.openBox(AppConstants.hiveBoxSettings);
+      await box.put(userId, getAllSettings());
+      if (kDebugMode) print('Settings saved for user $userId');
+      await box.close();
+    } catch (e) {
+      if (kDebugMode) print('Failed to save settings for $userId: $e');
+    }
+  }
+
+  /// Load persisted settings for a given user id into memory
+  Future<void> loadForUser(String userId) async {
+    try {
+      final box = await Hive.openBox(AppConstants.hiveBoxSettings);
+      final data = box.get(userId) as Map<String, dynamic>?;
+      if (data != null) loadSettings(Map<String, dynamic>.from(data));
+      if (kDebugMode) print('Settings loaded for user $userId');
+      await box.close();
+    } catch (e) {
+      if (kDebugMode) print('Failed to load settings for $userId: $e');
+    }
   }
 
   // Load settings from a map (from database)

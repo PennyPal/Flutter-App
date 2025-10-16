@@ -18,15 +18,16 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: const Color(0xFFF8E8EB),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF6B2C91),
-        foregroundColor: Colors.white,
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
         title: const Text('Advanced Settings'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+          onPressed: () => context.go(RouteNames.settings),
         ),
       ),
       body: SingleChildScrollView(
@@ -89,15 +90,15 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.red.shade50,
+                color: theme.colorScheme.errorContainer, // semantic
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.red.shade200),
+                border: Border.all(color: theme.colorScheme.error),
               ),
               child: Row(
                 children: [
                   Icon(
                     Icons.warning_outlined,
-                    color: Colors.red.shade700,
+                    color: theme.colorScheme.error,
                     size: 20,
                   ),
                   const SizedBox(width: 12),
@@ -106,7 +107,7 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
                       'Account deletion is permanent and cannot be undone. All your data will be lost.',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.red.shade700,
+                        color: theme.colorScheme.onError,
                       ),
                     ),
                   ),
@@ -120,18 +121,19 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
   }
 
   Widget _buildSectionCard({required String title, required List<Widget> children}) {
+    final theme = Theme.of(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2))],
+  boxShadow: [BoxShadow(color: Colors.black.withAlpha((0.05 * 255).round()), blurRadius: 8, offset: const Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+          Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface)),
           const SizedBox(height: 16),
           ...children,
         ],
@@ -140,12 +142,13 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
   }
 
   Widget _buildSwitchTile({required String title, required String subtitle, required bool value, required ValueChanged<bool> onChanged}) {
+    final theme = Theme.of(context);
     return SwitchListTile(
       title: Text(title),
       subtitle: Text(subtitle),
       value: value,
       onChanged: onChanged,
-      activeColor: const Color(0xFF6B2C91),
+      activeThumbColor: theme.colorScheme.primary,
       contentPadding: EdgeInsets.zero,
     );
   }
@@ -157,15 +160,16 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
     required VoidCallback onTap,
     bool isDestructive = false,
   }) {
+    final theme = Theme.of(context);
     return ListTile(
       leading: Icon(
         icon,
-        color: isDestructive ? Colors.red : const Color(0xFF6B2C91),
+        color: isDestructive ? theme.colorScheme.error : theme.colorScheme.primary,
       ),
       title: Text(
         title,
         style: TextStyle(
-          color: isDestructive ? Colors.red : Colors.black,
+          color: isDestructive ? theme.colorScheme.error : theme.colorScheme.onSurface,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -181,9 +185,45 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Data export ${value ? 'enabled' : 'disabled'}'), backgroundColor: Colors.green));
   }
 
-  void _updateAnalytics(bool value) {
+  Future<void> _updateAnalytics(bool value) async {
+    // If enabling analytics, ask for explicit consent first
+    if (value) {
+      final consent = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Analytics & Data Collection'),
+          content: const Text(
+            'We collect anonymous usage data to help improve the app. No personal data is collected. Do you consent to anonymous analytics?'
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('No')),
+            TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Yes')),
+          ],
+        ),
+      );
+
+      if (consent != true) {
+        // user declined, don't enable analytics
+        return;
+      }
+    }
+
+    if (!mounted) return;
     setState(() => _settingsService.updateAdvancedSettings(analyticsEnabled: value));
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Analytics ${value ? 'enabled' : 'disabled'}'), backgroundColor: Colors.green));
+
+    // Persist per-user
+    final userKey = UserService().userEmail.isNotEmpty ? UserService().userEmail : UserService().username;
+    try {
+      await _settingsService.saveForUser(userKey);
+    } catch (_) {
+      // ignore persistence errors here; state is already updated in-memory
+    }
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Analytics ${value ? 'enabled' : 'disabled'}'),
+      backgroundColor: Colors.green,
+    ));
   }
 
   void _exportData() {

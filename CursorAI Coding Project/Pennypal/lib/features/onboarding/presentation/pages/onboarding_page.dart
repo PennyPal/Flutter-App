@@ -284,10 +284,15 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _nextPage,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor: Theme.of(context).elevatedButtonTheme.style?.foregroundColor?.resolve({}) ?? Theme.of(context).colorScheme.onPrimary,
+                        padding: const EdgeInsets.symmetric(vertical: AppTheme.md),
+                      ),
                       child: Text(
                         _currentPage == _pages.length - 1
                             ? 'Get Started'
-                            : 'Continue',
+                            : 'Next',
                       ),
                     ),
                   ),

@@ -326,9 +326,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   
                   const SizedBox(height: AppTheme.xxl),
                   
-                  // Sign up button
+                  // sign up button (fixed green, unaffected by user-selected accent)
                   ElevatedButton(
                     onPressed: _isLoading ? null : _signUp,
+                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
                     child: _isLoading
                         ? const SizedBox(
                             height: 20,
@@ -340,7 +341,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                             ),
                           )
-                        : const Text('Create Account'),
+                        : const Text('sign up'),
                   ),
                   
                   const SizedBox(height: AppTheme.xxl),

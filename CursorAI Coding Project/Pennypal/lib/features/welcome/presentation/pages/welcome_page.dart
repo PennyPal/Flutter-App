@@ -78,7 +78,7 @@ class WelcomePage extends StatelessWidget {
                               shadows: [
                                 Shadow(
                                   blurRadius: 5.0,
-                                  color: Colors.black.withOpacity(0.3),
+                                  color: Colors.black.withAlpha((0.3 * 255).round()),
                                   offset: Offset(3.0, 3.0),
                                 ),
                               ],

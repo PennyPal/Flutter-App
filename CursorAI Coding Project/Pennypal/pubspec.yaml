@@ -37,6 +37,7 @@ dependencies:
   path_provider: ^2.1.4
   shared_preferences: ^2.3.2
   image_picker: ^1.0.7
+  permission_handler: ^11.3.0
   
   # Monitoring
   sentry_flutter: ^8.9.0

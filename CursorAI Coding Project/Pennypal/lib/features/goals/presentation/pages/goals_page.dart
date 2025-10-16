@@ -7,8 +7,10 @@ class GoalsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Goals'),
         actions: [
@@ -16,36 +18,36 @@ class GoalsPage extends StatelessWidget {
             onPressed: () {
               // TODO: Add goal
             },
-            icon: const Icon(
+            icon: Icon(
               Icons.add,
-              color: AppColors.onBackground,
+              color: theme.colorScheme.onSurface,
             ),
           ),
         ],
       ),
-      body: const Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.track_changes,
               size: 64,
-              color: AppColors.onBackground,
+              color: theme.colorScheme.onSurface,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
               'Goals Page',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: AppColors.onBackground,
+                color: theme.colorScheme.onSurface,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               'Coming soon...',
               style: TextStyle(
-                color: AppColors.onSecondary,
+                color: theme.colorScheme.onSecondary,
               ),
             ),
           ],

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../shared/services/settings_service.dart';
+import '../../../../core/router/route_names.dart';
+import 'package:permission_handler/permission_handler.dart';
+import '../../../../shared/services/user_service.dart';
 
 /// Notification settings page
 class NotificationSettingsPage extends StatefulWidget {
@@ -15,15 +18,17 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8E8EB),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF6B2C91),
-        foregroundColor: Colors.white,
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
         title: const Text('Notification Settings'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+          onPressed: () => context.go(RouteNames.settings),
         ),
       ),
       body: SingleChildScrollView(
@@ -95,18 +100,20 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
   }
 
   Widget _buildSectionCard({required String title, required List<Widget> children}) {
+    final theme = Theme.of(context);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2))],
+  boxShadow: [BoxShadow(color: Colors.black.withAlpha((0.05 * 255).round()), blurRadius: 8, offset: const Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+          Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface)),
           const SizedBox(height: 16),
           ...children,
         ],
@@ -120,7 +127,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
       subtitle: Text(subtitle),
       value: value,
       onChanged: onChanged,
-      activeColor: const Color(0xFF6B2C91),
+      activeThumbColor: Theme.of(context).colorScheme.primary,
       contentPadding: EdgeInsets.zero,
     );
   }
@@ -137,9 +144,45 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
     );
   }
 
-  void _updatePushNotifications(bool value) {
-    setState(() => _settingsService.updateNotificationSettings(pushNotifications: value));
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Push notifications ${value ? 'enabled' : 'disabled'}'), backgroundColor: Colors.green));
+  Future<void> _updatePushNotifications(bool value) async {
+    // If enabling, request notification permission on the platform
+    if (value) {
+      final status = await Permission.notification.request();
+      if (status.isGranted) {
+        setState(() => _settingsService.updateNotificationSettings(pushNotifications: true));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Push notifications enabled'), backgroundColor: Colors.green));
+      } else if (status.isPermanentlyDenied) {
+        // Prompt user to open app settings
+        final open = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Enable Notifications'),
+            content: const Text('Notifications are blocked. Would you like to open app settings to enable them?'),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+              TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Open Settings')),
+            ],
+          ),
+        );
+
+        if (open == true) {
+          openAppSettings();
+        }
+      } else {
+        setState(() => _settingsService.updateNotificationSettings(pushNotifications: false));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Push notifications denied'), backgroundColor: Colors.red));
+      }
+
+      // persist change for current user
+      final userKey = UserService().userEmail.isNotEmpty ? UserService().userEmail : UserService().username;
+      await _settingsService.saveForUser(userKey);
+    } else {
+      setState(() => _settingsService.updateNotificationSettings(pushNotifications: false));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Push notifications disabled'), backgroundColor: Colors.green));
+      // persist change for current user
+      final userKey = UserService().userEmail.isNotEmpty ? UserService().userEmail : UserService().username;
+      await _settingsService.saveForUser(userKey);
+    }
   }
 
   void _updateEmailNotifications(bool value) {

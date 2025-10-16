@@ -11,15 +11,22 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: const Color(0xFFF8E8EB), // Light pink background
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF6B2C91), // Deep royal magenta
-        foregroundColor: Colors.white,
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
         title: const Text('Settings'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go(RouteNames.home),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              context.go(RouteNames.home);
+            }
+          },
         ),
       ),
       body: SingleChildScrollView(
@@ -28,16 +35,18 @@ class SettingsPage extends StatelessWidget {
           children: [
             // Account Setting
             _buildSettingsCard(
+              context,
               icon: Icons.person_outline,
               title: 'Account Setting',
               description: 'Manage your profile details, email, and password',
-              onTap: () => context.go(RouteNames.profileEdit),
+              onTap: () => context.push('${RouteNames.profileEdit}?from=settings'),
             ),
             
             const SizedBox(height: 12),
             
             // Theme
             _buildSettingsCard(
+              context,
               icon: Icons.palette_outlined,
               title: 'Theme',
               description: 'Switch between light, dark, or colored themes',
@@ -48,6 +57,7 @@ class SettingsPage extends StatelessWidget {
             
             // Visibility
             _buildSettingsCard(
+              context,
               icon: Icons.visibility_outlined,
               title: 'Visibility',
               description: 'Control who can view your profile and activity',
@@ -58,6 +68,7 @@ class SettingsPage extends StatelessWidget {
             
             // Location Access
             _buildSettingsCard(
+              context,
               icon: Icons.location_on_outlined,
               title: 'Location Access',
               description: 'Allow or restrict location-based content & features',
@@ -68,6 +79,7 @@ class SettingsPage extends StatelessWidget {
             
             // Notifications
             _buildSettingsCard(
+              context,
               icon: Icons.notifications_outlined,
               title: 'Notifications',
               description: 'Choose what alerts you receive and how often',
@@ -78,6 +90,7 @@ class SettingsPage extends StatelessWidget {
             
             // Advanced
             _buildSettingsCard(
+              context,
               icon: Icons.settings_outlined,
               title: 'Advanced',
               description: 'Deactivate or permanently delete your account',
@@ -88,6 +101,7 @@ class SettingsPage extends StatelessWidget {
             
             // Log-out
             _buildSettingsCard(
+              context,
               icon: Icons.logout,
               title: 'Log-out',
               description: 'Sign out of your account',
@@ -101,23 +115,24 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingsCard({
+  Widget _buildSettingsCard(BuildContext context, {
     required IconData icon,
     required String title,
     required String description,
     required VoidCallback onTap,
   }) {
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: onTap,
-      child: Container(
+            child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withAlpha((0.05 * 255).round()),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -130,12 +145,12 @@ class SettingsPage extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: const Color(0xFF6B2C91).withOpacity(0.1),
+                color: theme.colorScheme.primary.withAlpha((0.1 * 255).round()),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
                 icon,
-                color: const Color(0xFF6B2C91),
+                color: theme.colorScheme.primary,
                 size: 20,
               ),
             ),
@@ -149,10 +164,10 @@ class SettingsPage extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: theme.colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 4),

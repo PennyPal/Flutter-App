@@ -24,6 +24,7 @@ class _ProfilePictureSelectionDialogState extends State<ProfilePictureSelectionD
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
@@ -40,11 +41,12 @@ class _ProfilePictureSelectionDialogState extends State<ProfilePictureSelectionD
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'Choose Profile Picture',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.onSurface,
                   ),
                 ),
                 IconButton(
@@ -86,6 +88,7 @@ class _ProfilePictureSelectionDialogState extends State<ProfilePictureSelectionD
   }
 
   Widget _buildUploadSection() {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -99,15 +102,15 @@ class _ProfilePictureSelectionDialogState extends State<ProfilePictureSelectionD
         
         const SizedBox(height: 12),
         
-        SizedBox(
+            SizedBox(
           width: double.infinity,
           child: ElevatedButton.icon(
             onPressed: _pickImageFromGallery,
             icon: const Icon(Icons.photo_library),
             label: const Text('Choose from Gallery'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF6B2C91),
-              foregroundColor: Colors.white,
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
               padding: const EdgeInsets.symmetric(vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -120,6 +123,7 @@ class _ProfilePictureSelectionDialogState extends State<ProfilePictureSelectionD
   }
 
   Widget _buildFinanceIconsGrid() {
+    final theme = Theme.of(context);
     final financePictures = _profilePictureService.getAllProfilePictures();
     
     return GridView.builder(
@@ -136,20 +140,20 @@ class _ProfilePictureSelectionDialogState extends State<ProfilePictureSelectionD
         final isSelected = _userService.profilePictureType == 'finance_icon' &&
             _userService.profilePicture == picture['id'];
         
-        return GestureDetector(
+            return GestureDetector(
           onTap: () => _selectFinanceIcon(picture['id'] as String),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: isSelected ? const Color(0xFF6B2C91) : Colors.grey.shade300,
+                color: isSelected ? theme.colorScheme.primary : Colors.grey.shade300,
                 width: isSelected ? 2 : 1,
               ),
             ),
             child: Icon(
               picture['icon'] as IconData,
-              color: picture['color'] as Color,
+              color: isSelected ? theme.colorScheme.onPrimary : (picture['color'] as Color),
               size: 24,
             ),
           ),
@@ -159,6 +163,7 @@ class _ProfilePictureSelectionDialogState extends State<ProfilePictureSelectionD
   }
 
   Widget _buildUserImagesSection() {
+    final theme = Theme.of(context);
     final userImages = _profilePictureService.getUserUploadedImages(_userService.userName);
     
     if (userImages.isEmpty) {
@@ -197,7 +202,7 @@ class _ProfilePictureSelectionDialogState extends State<ProfilePictureSelectionD
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: isSelected ? const Color(0xFF6B2C91) : Colors.grey.shade300,
+                      color: isSelected ? theme.colorScheme.primary : Colors.grey.shade300,
                       width: isSelected ? 2 : 1,
                     ),
                   ),

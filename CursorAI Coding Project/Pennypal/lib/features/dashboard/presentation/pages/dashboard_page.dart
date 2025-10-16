@@ -12,9 +12,9 @@ class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppTheme.lg),
@@ -32,7 +32,7 @@ class DashboardPage extends StatelessWidget {
                         UserService().getGreetingMessage(),
                         style: theme.textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.onBackground,
+                            color: theme.colorScheme.onSurface,
                         ),
                       ),
                     ],
@@ -41,12 +41,13 @@ class DashboardPage extends StatelessWidget {
                     children: [
                       IconButton(
                         onPressed: () {
+                          // navigate to profile page; Edit from dashboard will pass back=dashboard
                           context.go(RouteNames.profile);
                         },
                         icon: const Icon(Icons.person_outline),
                         style: IconButton.styleFrom(
-                          backgroundColor: const Color(0xFF6B2C91), // Deep royal magenta
-                          foregroundColor: Colors.white,
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: theme.colorScheme.onPrimary,
                         ),
                       ),
                       const SizedBox(width: AppTheme.sm),
@@ -56,8 +57,8 @@ class DashboardPage extends StatelessWidget {
                         },
                         icon: const Icon(Icons.settings_outlined),
                         style: IconButton.styleFrom(
-                          backgroundColor: const Color(0xFF6B2C91), // Deep royal magenta
-                          foregroundColor: Colors.white,
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: theme.colorScheme.onPrimary,
                         ),
                       ),
                     ],
@@ -72,11 +73,11 @@ class DashboardPage extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(AppTheme.xxl),
                 decoration: BoxDecoration(
-                  gradient: AppColors.primaryGradient,
+                  color: theme.colorScheme.primary,
                   borderRadius: BorderRadius.circular(AppTheme.radiusXl.x),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.3),
+                      color: theme.colorScheme.primary.withAlpha((0.3 * 255).round()),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),
@@ -88,7 +89,7 @@ class DashboardPage extends StatelessWidget {
                     Text(
                       'Total Balance',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: AppColors.onBackground.withOpacity(0.8),
+                          color: theme.colorScheme.onSurface.withAlpha((0.8 * 255).round()),
                       ),
                     ),
                     const SizedBox(height: AppTheme.sm),
@@ -96,7 +97,7 @@ class DashboardPage extends StatelessWidget {
                       '\$12,450.00', // TODO: Get from provider
                       style: theme.textTheme.displayMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.onBackground,
+                          color: theme.colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: AppTheme.lg),
@@ -157,7 +158,7 @@ class DashboardPage extends StatelessWidget {
                     'Recent Transactions',
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppColors.onBackground,
+                        color: theme.colorScheme.onSurface,
                     ),
                   ),
                   TextButton(
@@ -179,7 +180,7 @@ class DashboardPage extends StatelessWidget {
                 'Budget Overview',
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.onBackground,
+                    color: theme.colorScheme.onSurface,
                 ),
               ),
               
@@ -197,7 +198,7 @@ class DashboardPage extends StatelessWidget {
                     'Goals Progress',
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppColors.onBackground,
+                        color: theme.colorScheme.onSurface,
                     ),
                   ),
                   TextButton(
@@ -236,6 +237,7 @@ class DashboardPage extends StatelessWidget {
 
 class _BalanceItem extends StatelessWidget {
   const _BalanceItem({
+    super.key,
     required this.label,
     required this.amount,
     required this.icon,
@@ -265,14 +267,13 @@ class _BalanceItem extends StatelessWidget {
             Text(
               label,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: AppColors.onBackground.withOpacity(0.8),
+                  color: theme.colorScheme.onSurface.withAlpha((0.8 * 255).round()),
               ),
             ),
             Text(
               amount,
               style: theme.textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: AppColors.onBackground,
+                color: theme.colorScheme.onSurface.withAlpha((0.8 * 255).round()),
               ),
             ),
           ],
@@ -303,10 +304,10 @@ class _QuickActionCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(AppTheme.lg),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(AppTheme.radiusLg.x),
           border: Border.all(
-            color: AppColors.primary.withOpacity(0.2),
+            color: theme.colorScheme.primary.withAlpha((0.2 * 255).round()),
             width: 1,
           ),
         ),
@@ -315,12 +316,12 @@ class _QuickActionCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(AppTheme.md),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: theme.colorScheme.primary.withAlpha((0.1 * 255).round()),
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
               ),
               child: Icon(
                 icon,
-                color: AppColors.primary,
+                color: theme.colorScheme.primary,
                 size: 24,
               ),
             ),
@@ -329,7 +330,7 @@ class _QuickActionCard extends StatelessWidget {
               title,
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: AppColors.onBackground,
+                color: theme.colorScheme.onBackground,
               ),
               textAlign: TextAlign.center,
             ),
@@ -362,7 +363,7 @@ class _TransactionTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: AppTheme.md),
       padding: const EdgeInsets.all(AppTheme.lg),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
       ),
       child: Row(
@@ -370,12 +371,12 @@ class _TransactionTile extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(AppTheme.md),
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
+              color: theme.colorScheme.primary.withAlpha((0.1 * 255).round()),
               borderRadius: BorderRadius.circular(AppTheme.radiusSm.x),
             ),
             child: Icon(
               icon,
-              color: AppColors.primary,
+              color: theme.colorScheme.primary,
               size: 20,
             ),
           ),
@@ -387,14 +388,14 @@ class _TransactionTile extends StatelessWidget {
                 Text(
                   title,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.onBackground,
+                      fontWeight: FontWeight.w500,
+                      color: theme.colorScheme.onSurface,
                   ),
                 ),
                 Text(
                   category,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppColors.onSecondary,
+                    color: theme.colorScheme.onSecondary,
                   ),
                 ),
               ],
@@ -421,7 +422,7 @@ class _BudgetProgressCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppTheme.lg),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
       ),
       child: Column(
@@ -431,7 +432,7 @@ class _BudgetProgressCard extends StatelessWidget {
             'Monthly Budget',
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w500,
-              color: AppColors.onBackground,
+              color: theme.colorScheme.onBackground,
             ),
           ),
           const SizedBox(height: AppTheme.md),
@@ -441,7 +442,7 @@ class _BudgetProgressCard extends StatelessWidget {
               Text(
                 '\$2,100 / \$3,000',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: AppColors.onSecondary,
+                  color: theme.colorScheme.onSecondary,
                 ),
               ),
               Text(
@@ -456,7 +457,7 @@ class _BudgetProgressCard extends StatelessWidget {
           const SizedBox(height: AppTheme.sm),
           LinearProgressIndicator(
             value: 0.7,
-            backgroundColor: AppColors.surfaceVariant,
+            backgroundColor: theme.colorScheme.surfaceVariant,
             valueColor: const AlwaysStoppedAnimation<Color>(AppColors.warning),
           ),
         ],
@@ -473,7 +474,7 @@ class _GoalProgressCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppTheme.lg),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
       ),
       child: Row(
@@ -482,7 +483,7 @@ class _GoalProgressCard extends StatelessWidget {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: AppColors.success.withOpacity(0.1),
+              color: AppColors.success.withAlpha((0.1 * 255).round()),
               borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
             ),
             child: const Icon(
@@ -500,20 +501,20 @@ class _GoalProgressCard extends StatelessWidget {
                   'Vacation Fund',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
-                    color: AppColors.onBackground,
+                    color: theme.colorScheme.onBackground,
                   ),
                 ),
                 const SizedBox(height: AppTheme.xs),
                 Text(
                   '\$1,250 / \$2,000',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppColors.onSecondary,
+                    color: theme.colorScheme.onSecondary,
                   ),
                 ),
                 const SizedBox(height: AppTheme.sm),
                 LinearProgressIndicator(
                   value: 0.625,
-                  backgroundColor: AppColors.surfaceVariant,
+                  backgroundColor: theme.colorScheme.surfaceVariant,
                   valueColor: const AlwaysStoppedAnimation<Color>(AppColors.success),
                 ),
               ],

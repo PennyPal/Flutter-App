@@ -9,12 +9,12 @@ class QuestsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Quests & Rewards'),
-        backgroundColor: AppColors.background,
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -32,7 +32,7 @@ class QuestsPage extends StatelessWidget {
               'Daily Quests',
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.onBackground,
+                color: theme.colorScheme.onSurface,
               ),
             ),
             
@@ -47,7 +47,7 @@ class QuestsPage extends StatelessWidget {
               'Weekly Challenges',
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.onBackground,
+                color: theme.colorScheme.onSurface,
               ),
             ),
             
@@ -62,7 +62,7 @@ class QuestsPage extends StatelessWidget {
               'Achievements',
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.onBackground,
+                color: theme.colorScheme.onSurface,
               ),
             ),
             
@@ -84,11 +84,11 @@ class _HeaderSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppTheme.lg),
       decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
+  gradient: LinearGradient(colors: [theme.colorScheme.primary, theme.colorScheme.primary.withAlpha((0.85 * 255).round())]),
         borderRadius: BorderRadius.circular(AppTheme.radiusLg.x),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.3),
+            color: theme.colorScheme.onSurface.withAlpha((0.3 * 255).round()),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -99,12 +99,12 @@ class _HeaderSection extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(AppTheme.md),
             decoration: BoxDecoration(
-              color: AppColors.onPrimary.withOpacity(0.2),
+              color: theme.colorScheme.onPrimary.withAlpha((0.2 * 255).round()),
               borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.emoji_events,
-              color: AppColors.onPrimary,
+              color: theme.colorScheme.onPrimary,
               size: 32,
             ),
           ),
@@ -116,20 +116,20 @@ class _HeaderSection extends StatelessWidget {
                 Text(
                   'Your Points',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.onPrimary.withOpacity(0.9),
+                    color: theme.colorScheme.onPrimary.withAlpha((0.9 * 255).round()),
                   ),
                 ),
                 Text(
                   '2,450',
                   style: theme.textTheme.displayMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.onPrimary,
+                    color: theme.colorScheme.onPrimary,
                   ),
                 ),
                 Text(
                   'Level 5 • 450 points to next level',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppColors.onPrimary.withOpacity(0.8),
+                    color: theme.colorScheme.onPrimary.withAlpha((0.8 * 255).round()),
                   ),
                 ),
               ],
@@ -138,13 +138,13 @@ class _HeaderSection extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: AppTheme.md, vertical: AppTheme.sm),
             decoration: BoxDecoration(
-              color: AppColors.onPrimary.withOpacity(0.2),
+              color: theme.colorScheme.onPrimary.withAlpha((0.2 * 255).round()),
               borderRadius: BorderRadius.circular(AppTheme.radiusSm.x),
             ),
             child: Text(
               'Level 5',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: AppColors.onPrimary,
+                color: theme.colorScheme.onPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -197,15 +197,15 @@ class _QuestTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: AppTheme.md),
       padding: const EdgeInsets.all(AppTheme.lg),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
         border: Border.all(
-          color: completed ? AppColors.success.withOpacity(0.3) : AppColors.onSurface.withOpacity(0.2),
+                    color: completed ? AppColors.success.withAlpha((0.3 * 255).round()) : theme.colorScheme.onSurface.withAlpha((0.2 * 255).round()),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.onSurface.withOpacity(0.1),
+            color: theme.colorScheme.onSurface.withAlpha((0.1 * 255).round()),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -215,15 +215,15 @@ class _QuestTile extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(AppTheme.sm),
-            decoration: BoxDecoration(
-              color: completed ? AppColors.success.withOpacity(0.1) : AppColors.primary.withOpacity(0.1),
+              decoration: BoxDecoration(
+              color: completed ? AppColors.success.withAlpha((0.1 * 255).round()) : theme.colorScheme.primary.withAlpha((0.1 * 255).round()),
               borderRadius: BorderRadius.circular(AppTheme.radiusSm.x),
             ),
-            child: Icon(
-              completed ? Icons.check_circle : icon,
-              color: completed ? AppColors.success : AppColors.primary,
-              size: 24,
-            ),
+              child: Icon(
+                completed ? Icons.check_circle : icon,
+                color: completed ? AppColors.success : theme.colorScheme.primary,
+                size: 24,
+              ),
           ),
           const SizedBox(width: AppTheme.md),
           Expanded(
@@ -234,17 +234,17 @@ class _QuestTile extends StatelessWidget {
                   title,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
-                    color: AppColors.onBackground,
+                    color: theme.colorScheme.onSurface,
                     decoration: completed ? TextDecoration.lineThrough : null,
                   ),
                 ),
                 const SizedBox(height: AppTheme.xs),
                 Text(
                   '+$points points',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: completed ? AppColors.success : AppColors.onSecondary,
-                    fontWeight: FontWeight.w600,
-                  ),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: completed ? AppColors.success : theme.colorScheme.onSecondary,
+                      fontWeight: FontWeight.w600,
+                    ),
                 ),
               ],
             ),
@@ -261,8 +261,8 @@ class _QuestTile extends StatelessWidget {
                 // TODO: Complete quest
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: AppColors.onPrimary,
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: theme.colorScheme.onPrimary,
                 padding: const EdgeInsets.symmetric(horizontal: AppTheme.md, vertical: AppTheme.sm),
               ),
               child: const Text('Start'),
@@ -314,11 +314,11 @@ class _ChallengeTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: AppTheme.md),
       padding: const EdgeInsets.all(AppTheme.lg),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
         boxShadow: [
           BoxShadow(
-            color: AppColors.onSurface.withOpacity(0.1),
+            color: theme.colorScheme.onSurface.withAlpha((0.1 * 255).round()),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -331,12 +331,12 @@ class _ChallengeTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(AppTheme.sm),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: theme.colorScheme.primary.withAlpha((0.1 * 255).round()),
                   borderRadius: BorderRadius.circular(AppTheme.radiusSm.x),
                 ),
                 child: Icon(
                   icon,
-                  color: AppColors.primary,
+                  color: theme.colorScheme.primary,
                   size: 24,
                 ),
               ),
@@ -349,34 +349,34 @@ class _ChallengeTile extends StatelessWidget {
                       title,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w500,
-                        color: AppColors.onBackground,
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: AppTheme.xs),
                     Text(
                       reward,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppColors.primary,
+                        color: theme.colorScheme.primary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
                 ),
               ),
-              Text(
-                '${(progress * 100).toInt()}%',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w600,
+                Text(
+                  '${(progress * 100).toInt()}%',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: AppTheme.md),
           LinearProgressIndicator(
             value: progress,
-            backgroundColor: AppColors.surfaceVariant,
-            valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
+            backgroundColor: theme.colorScheme.surfaceVariant,
+            valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
           ),
         ],
       ),
@@ -442,12 +442,12 @@ class _AchievementCard extends StatelessWidget {
         color: unlocked ? AppColors.surface : AppColors.surfaceVariant,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
         border: Border.all(
-          color: unlocked ? AppColors.success.withOpacity(0.3) : AppColors.onSurface.withOpacity(0.2),
+          color: unlocked ? AppColors.success.withAlpha((0.3 * 255).round()) : AppColors.onSurface.withAlpha((0.2 * 255).round()),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.onSurface.withOpacity(0.1),
+            color: AppColors.onSurface.withAlpha((0.1 * 255).round()),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -459,7 +459,7 @@ class _AchievementCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(AppTheme.md),
             decoration: BoxDecoration(
-              color: unlocked ? AppColors.success.withOpacity(0.1) : AppColors.onSurface.withOpacity(0.1),
+              color: unlocked ? AppColors.success.withAlpha((0.1 * 255).round()) : AppColors.onSurface.withAlpha((0.1 * 255).round()),
               borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
             ),
             child: Icon(
