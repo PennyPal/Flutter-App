@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../shared/models/lesson.dart';
 import '../../enhanced_methods.dart';
+import 'lesson_viewer_page.dart';
 
 /// Comprehensive Learning page with financial education content
 class LearnPage extends StatefulWidget {
@@ -17,13 +19,21 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin {
   String _searchQuery = '';
   
   // Track completed lessons
-  final Set<String> _completedLessons = {};
-  final Set<String> _bookmarkedLessons = {};
+  static final Set<String> _completedLessons = {};
+  static final Set<String> _bookmarkedLessons = {};
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+  }
+  
+  static void markLessonCompleted(String lessonId) {
+    _completedLessons.add(lessonId);
+  }
+  
+  static bool isLessonCompleted(String lessonId) {
+    return _completedLessons.contains(lessonId);
   }
 
   @override
@@ -39,7 +49,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin {
       return Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Financial Education'),
+        title: const Text('PennyPal'),
         backgroundColor: theme.colorScheme.background,
         elevation: 0,
         actions: [
@@ -106,6 +116,8 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin {
 class _FeaturedTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final lessons = LessonData.getTeenLessons();
+    
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppTheme.lg),
       child: Column(
@@ -116,19 +128,113 @@ class _FeaturedTab extends StatelessWidget {
 
           SizedBox(height: AppTheme.lg),
 
-          // Featured Course
-          _FeaturedCourseCard(),
+          // Featured Lessons Section
+          Text(
+            'Featured Lessons',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: AppTheme.md),
+          
+          // First 3 lessons as featured
+          ...lessons.take(3).map((lesson) => Padding(
+            padding: const EdgeInsets.only(bottom: AppTheme.md),
+            child: _FeaturedLessonCard(lesson: lesson),
+          )),
 
-          SizedBox(height: AppTheme.xl),
-
-          // Quick Actions
-          _QuickActionsGrid(),
-
-          SizedBox(height: AppTheme.xl),
+          const SizedBox(height: AppTheme.xl),
 
           // Today's Tip
           _TodaysTipCard(),
         ],
+      ),
+    );
+  }
+}
+
+class _FeaturedLessonCard extends StatelessWidget {
+  const _FeaturedLessonCard({required this.lesson});
+
+  final Lesson lesson;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LessonViewerPage(lesson: lesson),
+          ),
+        );
+      },
+      borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
+      child: Container(
+        padding: const EdgeInsets.all(AppTheme.md),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
+          border: Border.all(
+            color: lesson.color.withAlpha((0.3 * 255).round()),
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: theme.colorScheme.onSurface.withAlpha((0.05 * 255).round()),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppTheme.md),
+              decoration: BoxDecoration(
+                color: lesson.color.withAlpha((0.1 * 255).round()),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd.x),
+              ),
+              child: Icon(
+                lesson.icon,
+                color: lesson.color,
+                size: 32,
+              ),
+            ),
+            const SizedBox(width: AppTheme.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    lesson.title,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.xs),
+                  Text(
+                    lesson.description,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 20,
+              color: theme.colorScheme.onSurface,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -589,77 +695,38 @@ class _TodaysTipCard extends StatelessWidget {
   }
 }
 
-class _CoursesTab extends StatelessWidget {
+class _CoursesTab extends StatefulWidget {
+  @override
+  State<_CoursesTab> createState() => _CoursesTabState();
+}
+
+class _CoursesTabState extends State<_CoursesTab> {
   @override
   Widget build(BuildContext context) {
-    final courses = [
-      {
-        'title': 'Personal Budgeting Mastery',
-        'description': 'Learn to create and stick to a budget that works for you',
-        'lessons': 8,
-        'duration': '2 hours',
-        'difficulty': 'Beginner',
-        'rating': 4.8,
-        'color': AppColors.primary,
-        'icon': Icons.account_balance_wallet,
-      },
-      {
-        'title': 'Investment Fundamentals',
-        'description': 'Understand stocks, bonds, and building a portfolio',
-        'lessons': 12,
-        'duration': '3 hours',
-        'difficulty': 'Intermediate',
-        'rating': 4.9,
-        'color': AppColors.success,
-        'icon': Icons.trending_up,
-      },
-      {
-        'title': 'Debt Management Strategies',
-        'description': 'Effective ways to pay down debt and improve credit',
-        'lessons': 6,
-        'duration': '1.5 hours',
-        'difficulty': 'Beginner',
-        'rating': 4.7,
-        'color': AppColors.warning,
-        'icon': Icons.credit_card,
-      },
-      {
-        'title': 'Retirement Planning',
-        'description': 'Plan for a secure financial future',
-        'lessons': 10,
-        'duration': '2.5 hours',
-        'difficulty': 'Advanced',
-        'rating': 4.8,
-        'color': AppColors.info,
-        'icon': Icons.elderly,
-      },
-      {
-        'title': 'Tax Optimization',
-        'description': 'Maximize deductions and minimize tax burden',
-        'lessons': 7,
-        'duration': '2 hours',
-        'difficulty': 'Intermediate',
-        'rating': 4.6,
-        'color': AppColors.error,
-        'icon': Icons.receipt_long,
-      },
-    ];
+    final lessons = LessonData.getTeenLessons();
     
     return ListView.builder(
       padding: const EdgeInsets.all(AppTheme.lg),
-      itemCount: courses.length,
+      itemCount: lessons.length,
       itemBuilder: (context, index) {
-        final course = courses[index];
-        return _CourseCard(course: course);
+        final lesson = lessons[index];
+        return _LessonCard(
+          lesson: lesson,
+          onCompleted: () => setState(() {}),
+        );
       },
     );
   }
 }
 
-class _CourseCard extends StatelessWidget {
-  const _CourseCard({required this.course});
+class _LessonCard extends StatelessWidget {
+  const _LessonCard({
+    required this.lesson,
+    this.onCompleted,
+  });
 
-  final Map<String, dynamic> course;
+  final Lesson lesson;
+  final VoidCallback? onCompleted;
 
   @override
   Widget build(BuildContext context) {
@@ -687,12 +754,12 @@ class _CourseCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(AppTheme.sm),
                 decoration: BoxDecoration(
-                  color: (course['color'] as Color).withAlpha((0.1 * 255).round()),
+                  color: lesson.color.withAlpha((0.1 * 255).round()),
                   borderRadius: BorderRadius.circular(AppTheme.radiusSm.x),
                 ),
                 child: Icon(
-                  course['icon'] as IconData,
-                  color: course['color'] as Color,
+                  lesson.icon,
+                  color: lesson.color,
                   size: 24,
                 ),
               ),
@@ -702,14 +769,14 @@ class _CourseCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      course['title'] as String,
+                      lesson.title,
                       style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.onSurface,
-                        ),
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.onSurface,
+                      ),
                     ),
                     Text(
-                      course['description'] as String,
+                      lesson.description,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurface,
                       ),
@@ -723,18 +790,18 @@ class _CourseCard extends StatelessWidget {
           Row(
             children: [
               _CourseInfo(
-                icon: Icons.play_circle_outline,
-                text: '${course['lessons']} lessons',
+                icon: Icons.quiz,
+                text: '${lesson.quizQuestions.length} questions',
               ),
               const SizedBox(width: AppTheme.md),
               _CourseInfo(
                 icon: Icons.schedule,
-                text: course['duration'] as String,
+                text: '${lesson.duration} min',
               ),
               const SizedBox(width: AppTheme.md),
               _CourseInfo(
                 icon: Icons.signal_cellular_alt,
-                text: course['difficulty'] as String,
+                text: lesson.difficulty,
               ),
             ],
           ),
@@ -742,20 +809,65 @@ class _CourseCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                '${course['rating']} ⭐',
+                '4.8 ⭐',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                        color: AppColors.warning,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  color: AppColors.warning,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
+              if (_LearnPageState.isLessonCompleted(lesson.id))
+                Padding(
+                  padding: const EdgeInsets.only(left: AppTheme.sm),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.sm,
+                      vertical: AppTheme.xs,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.success.withAlpha((0.1 * 255).round()),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm.x),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.check_circle,
+                          size: 16,
+                          color: AppColors.success,
+                        ),
+                        const SizedBox(width: AppTheme.xs),
+                        Text(
+                          'Completed',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: AppColors.success,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               const Spacer(),
               ElevatedButton(
-                onPressed: () => LearnPageMethods.startDetailedCourse(context, course),
+                onPressed: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LessonViewerPage(lesson: lesson),
+                    ),
+                  );
+                  
+                  // If lesson was completed, mark it
+                  if (result == true) {
+                    _LearnPageState.markLessonCompleted(lesson.id);
+                    onCompleted?.call();
+                  }
+                },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: course['color'] as Color,
-                  foregroundColor: AppColors.onPrimary,
+                  backgroundColor: lesson.color,
+                  foregroundColor: Colors.white,
                 ),
-                child: const Text('Start Course'),
+                child: const Text('Start Lesson'),
               ),
             ],
           ),
