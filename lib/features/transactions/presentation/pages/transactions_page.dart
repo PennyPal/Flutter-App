@@ -43,9 +43,10 @@ class _TransactionsPageState extends State<TransactionsPage> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Transactions'),
+        title: const Text('Transactions', style: TextStyle(color: Colors.white)),
         backgroundColor: theme.colorScheme.primary,
         elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           IconButton(
             onPressed: () => _showSearchDialog(),

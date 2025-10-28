@@ -197,11 +197,11 @@ class _BottomNavBar extends StatelessWidget {
                 onTap: () => context.go(RouteNames.transactions),
               ),
               _NavItem(
-                icon: Icons.pie_chart_outline,
-                activeIcon: Icons.pie_chart,
-                label: 'Budgets 📊',
-                isActive: location.startsWith(RouteNames.budgets),
-                onTap: () => context.go(RouteNames.budgets),
+                icon: Icons.emoji_events_outlined,
+                activeIcon: Icons.emoji_events,
+                label: 'Challenges 🏆',
+                isActive: location.startsWith(RouteNames.challenges),
+                onTap: () => context.go(RouteNames.challenges),
               ),
               _NavItem(
                 icon: Icons.monetization_on_outlined,

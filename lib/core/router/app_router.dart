@@ -13,6 +13,7 @@ import '../../features/transactions/presentation/pages/transactions_page.dart';
 import '../../features/transactions/presentation/pages/transaction_add_page.dart';
 import '../../features/budgets/presentation/pages/budgets_page.dart';
 import '../../features/budgets/presentation/pages/budget_add_page.dart';
+import '../../features/challenges/presentation/pages/challenges_page.dart';
 import '../../features/goals/presentation/pages/goals_page.dart';
 import '../../features/learn/presentation/pages/learn_page.dart';
 import '../../features/chat/presentation/pages/chat_page.dart';
@@ -108,6 +109,13 @@ class AppRouter {
               path: RouteNames.budgets,
               name: 'budgets',
               builder: (context, state) => const BudgetsPage(),
+            ),
+
+            // Challenges
+            GoRoute(
+              path: RouteNames.challenges,
+              name: 'challenges',
+              builder: (context, state) => const ChallengesPage(),
             ),
 
             // Goals

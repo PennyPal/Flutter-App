@@ -95,9 +95,10 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('AI Financial Advisor'),
+        title: const Text('AI Financial Advisor', style: TextStyle(color: Colors.white)),
         backgroundColor: theme.colorScheme.primary,
         elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           IconButton(
             onPressed: () {
