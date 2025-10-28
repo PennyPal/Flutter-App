@@ -45,7 +45,6 @@ class _ConfettiCelebrationState extends State<ConfettiCelebration> {
       child: ConfettiWidget(
         confettiController: _controller,
         blastDirection: 3.14 / 2, // Blast upwards
-        maxBlastDirection: 3.14 / 2,
         emissionFrequency: 0.05,
         numberOfParticles: 50,
         gravity: 0.1,

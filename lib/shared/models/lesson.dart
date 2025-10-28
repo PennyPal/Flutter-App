@@ -114,7 +114,7 @@ Remember, budgeting isn't about never having fun. It's about making sure you can
           ),
           QuizQuestion(
             question: 'You want to buy a \$500 item. How much should you have saved before buying it?',
-            options: ['Exactly \$500', 'At least \$600', 'Any amount is fine', 'Nothing, use Afterpay'],
+            options: ['Exactly \\\$500', 'At least \\\$600', 'Any amount is fine', 'Nothing, use Afterpay'],
             correctAnswerIndex: 1,
             explanation: 'Always have a cushion. Unexpected expenses happen, and paying cash instead of financing keeps you out of debt traps.',
           ),
@@ -190,7 +190,7 @@ The golden rule is this: Only use credit if you can pay it back IMMEDIATELY. If 
         quizQuestions: [
           QuizQuestion(
             question: 'Your credit card has a \$1,000 limit. How much should you use to keep your score healthy?',
-            options: ['\$50', '\$300', '\$900', '\$1,000'],
+            options: ['\\\$50', '\\\$300', '\\\$900', '\\\$1,000'],
             correctAnswerIndex: 1,
             explanation: 'Keep credit utilization under 30%. For a \$1,000 limit, that means using \$300 or less. Lenders like to see you\'re not desperate for credit.',
           ),
@@ -284,7 +284,7 @@ Just invest in index funds consistently for decades. That's literally it. The bo
         quizQuestions: [
           QuizQuestion(
             question: 'If you invest \$100 a month at 7% returns for 20 years, approximately how much will you have?',
-            options: ['\$20,000', '\$52,000', '\$100,000', '\$250,000'],
+            options: ['\\\$20,000', '\\\$52,000', '\\\$100,000', '\\\$250,000'],
             correctAnswerIndex: 1,
             explanation: 'With compound interest, you\'d have about \$52,000. You only contributed \$24,000, but growth and compounding did the rest.',
           ),
@@ -390,7 +390,7 @@ Taxes aren't optional. You can't avoid them, but you can understand them and tak
         quizQuestions: [
           QuizQuestion(
             question: 'If you make \$2,000 a month working part-time, approximately how much should you expect in taxes?',
-            options: ['\$0', 'About \$300', 'About \$600', 'About \$1,000'],
+            options: ['\\\$0', 'About \\\$300', 'About \\\$600', 'About \\\$1,000'],
             correctAnswerIndex: 1,
             explanation: 'At about 15% average tax rate including income and FICA, you\'re looking at about \$300 a month in taxes.',
           ),

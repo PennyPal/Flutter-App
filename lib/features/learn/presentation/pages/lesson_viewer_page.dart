@@ -4,6 +4,7 @@ import '../../../../core/theme/color_scheme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../shared/models/lesson.dart';
 import '../../../../shared/services/gamification_service.dart';
+import '../../../../shared/widgets/confetti_celebration.dart';
 
 class LessonViewerPage extends StatefulWidget {
   final Lesson lesson;
@@ -39,53 +40,70 @@ class _LessonViewerPageState extends State<LessonViewerPage> {
 
   void _submitAnswer() {
     final currentQuestion = widget.lesson.quizQuestions[_currentQuestionIndex];
+    final isCorrect = _selectedAnswerIndex == currentQuestion.correctAnswerIndex;
     
-    if (_selectedAnswerIndex == currentQuestion.correctAnswerIndex) {
+    if (isCorrect) {
       setState(() {
         _correctAnswers++;
       });
     }
     
-    // Show explanation
+    // Show explanation with confetti if correct
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          _selectedAnswerIndex == currentQuestion.correctAnswerIndex
-              ? 'Correct! 🎉'
-              : 'Not quite',
-          style: TextStyle(
-            color: _selectedAnswerIndex == currentQuestion.correctAnswerIndex
-                ? AppColors.success
-                : AppColors.error,
+      barrierDismissible: false,
+      builder: (context) => Stack(
+        children: [
+          AlertDialog(
+            title: Text(
+              isCorrect
+                  ? 'Correct! 🎉'
+                  : 'Not quite',
+              style: TextStyle(
+                color: isCorrect
+                    ? AppColors.success
+                    : AppColors.error,
+              ),
+            ),
+            content: Text(currentQuestion.explanation),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  
+                  if (_currentQuestionIndex < widget.lesson.quizQuestions.length - 1) {
+                    setState(() {
+                      _currentQuestionIndex++;
+                      _selectedAnswerIndex = -1;
+                    });
+                  } else {
+                    setState(() {
+                      _quizCompleted = true;
+                    });
+                    
+                    // Award XP for completing lesson
+                    final gamificationService = GamificationService();
+                    gamificationService.completeQuiz(
+                      score: (_correctAnswers / widget.lesson.quizQuestions.length * 100).round(),
+                      quizId: widget.lesson.id,
+                    );
+                  }
+                },
+                child: const Text('Continue'),
+              ),
+            ],
           ),
-        ),
-        content: Text(currentQuestion.explanation),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              
-              if (_currentQuestionIndex < widget.lesson.quizQuestions.length - 1) {
-                setState(() {
-                  _currentQuestionIndex++;
-                  _selectedAnswerIndex = -1;
-                });
-              } else {
-                setState(() {
-                  _quizCompleted = true;
-                });
-                
-                // Award XP for completing lesson
-                final gamificationService = GamificationService();
-                gamificationService.completeQuiz(
-                  score: (_correctAnswers / widget.lesson.quizQuestions.length * 100).round(),
-                  quizId: widget.lesson.id,
-                );
-              }
-            },
-            child: const Text('Continue'),
-          ),
+          if (isCorrect)
+            const ConfettiCelebration(
+              duration: 2000,
+              colors: [
+                Colors.purple,
+                Colors.blue,
+                Colors.green,
+                Colors.yellow,
+                Colors.orange,
+              ],
+            ),
         ],
       ),
     );
@@ -404,12 +422,29 @@ class _LessonViewerPageState extends State<LessonViewerPage> {
     final theme = Theme.of(context);
     final score = (_correctAnswers / widget.lesson.quizQuestions.length * 100).round();
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppTheme.lg),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(height: AppTheme.xxl),
+    return Stack(
+      children: [
+        // Confetti Effect
+        const Align(
+          alignment: Alignment.topCenter,
+          child: ConfettiCelebration(
+            duration: 3000,
+            colors: [
+              Colors.purple,
+              Colors.blue,
+              Colors.green,
+              Colors.yellow,
+              Colors.orange,
+            ],
+          ),
+        ),
+        // Content
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(AppTheme.lg),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: AppTheme.xxl),
 
           // Success Icon
           Container(
@@ -501,8 +536,10 @@ class _LessonViewerPageState extends State<LessonViewerPage> {
               ),
             ),
           ).animate().fadeIn(duration: 400.ms).then(delay: 900.ms),
-        ],
-      ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

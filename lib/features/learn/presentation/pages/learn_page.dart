@@ -3,6 +3,7 @@ import 'dart:math';
 import '../../../../core/theme/color_scheme.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../shared/models/lesson.dart';
+import '../../../../shared/services/gamification_service.dart';
 import '../../enhanced_methods.dart';
 import 'lesson_viewer_page.dart';
 
@@ -244,6 +245,9 @@ class _WelcomeSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final gamificationService = GamificationService();
+    final levelProgress = gamificationService.getLevelProgress();
+    
     return Container(
       padding: const EdgeInsets.all(AppTheme.lg),
       decoration: BoxDecoration(
@@ -255,10 +259,42 @@ class _WelcomeSection extends StatelessWidget {
         children: [
           Row(
             children: [
-                    const Icon(
-                Icons.lightbulb,
-                color: Colors.white,
-                size: 32,
+              // Level Badge
+              Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(AppTheme.radiusLg.x),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha((0.2 * 255).round()),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '${gamificationService.currentLevel}',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                    Text(
+                      'LEVEL',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(width: AppTheme.md),
               Expanded(
@@ -266,16 +302,43 @@ class _WelcomeSection extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Continue Learning',
+                      'Level ${gamificationService.currentLevel}',
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.onPrimary,
+                        color: Colors.white,
                       ),
                     ),
                     Text(
-                      'Build your financial knowledge step by step',
+                      '${gamificationService.totalXP} XP • ${gamificationService.currentStreak} day streak 🔥',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onPrimary.withAlpha((0.9 * 255).round()),
+                        color: Colors.white.withAlpha((0.9 * 255).round()),
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.sm),
+                    // XP Progress Bar
+                    Container(
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withAlpha((0.2 * 255).round()),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: FractionallySizedBox(
+                        alignment: Alignment.centerLeft,
+                        widthFactor: levelProgress['progress']! / 100.0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.xs),
+                    Text(
+                      '${levelProgress['current']} / ${levelProgress['next']} XP to Level ${gamificationService.currentLevel + 1}',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: Colors.white.withAlpha((0.8 * 255).round()),
+                        fontSize: 11,
                       ),
                     ),
                   ],
@@ -286,16 +349,28 @@ class _WelcomeSection extends StatelessWidget {
           const SizedBox(height: AppTheme.lg),
           Row(
             children: [
-              _StatCard(
-                label: 'Lessons Completed',
-                value: '12',
-                icon: Icons.check_circle,
+              Expanded(
+                child: _StatCard(
+                  label: 'Lessons',
+                  value: '${gamificationService.quizzesCompleted}',
+                  icon: Icons.check_circle,
+                ),
               ),
               const SizedBox(width: AppTheme.md),
-              _StatCard(
-                label: 'Study Streak',
-                value: '5 days',
-                icon: Icons.local_fire_department,
+              Expanded(
+                child: _StatCard(
+                  label: 'Streak',
+                  value: '${gamificationService.currentStreak} days',
+                  icon: Icons.local_fire_department,
+                ),
+              ),
+              const SizedBox(width: AppTheme.md),
+              Expanded(
+                child: _StatCard(
+                  label: 'Badges',
+                  value: '${gamificationService.badgesEarned}',
+                  icon: Icons.emoji_events,
+                ),
               ),
             ],
           ),
